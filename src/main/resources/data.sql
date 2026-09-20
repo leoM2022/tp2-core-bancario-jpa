@@ -3,31 +3,31 @@
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
--- 1. TABLA: clientes (20 clientes - CUIL sin guiones de 11 dígitos)
+-- 1. TABLA: clientes (20 clientes)
 -- -----------------------------------------------------------------------------
 INSERT INTO clientes (
     id, nombre, cuil, email, telefono, razon_social, direccion, id_tutor, fecha_creacion, `fecha_ultima_modificacion`
 ) VALUES
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000001'), 'Esteban Quito', '20354128794', 'esteban.quito@email.com', '+54-388-4123456', 'Esteban Quito Servicios Informaticos', 'Av. Fascio 650', NULL, TIMESTAMP '2026-01-05 08:30:00', TIMESTAMP '2026-01-05 08:30:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000002'), 'Mariana Lopez', '27389654128', 'mariana.lopez@email.com', '+54-388-5987654', 'Lopez Disenos Graficos SRL', 'Belgrano 1024', NULL, TIMESTAMP '2026-01-07 09:15:00', TIMESTAMP '2026-01-07 09:15:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000003'), 'Carlos Tevez', '20301245789', 'carlos.tevez@email.com', '+54-388-6321456', 'Transportes del Norte SA', 'Alvear 430', NULL, TIMESTAMP '2026-01-10 10:00:00', TIMESTAMP '2026-01-10 10:00:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000004'), 'Lucia Fernandez', '27365214783', 'lucia.fernandez@email.com', '+54-388-4981234', 'Fernandez Arquitectura SAS', 'San Martin 820', NULL, TIMESTAMP '2026-01-12 11:45:00', TIMESTAMP '2026-01-12 11:45:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000005'), 'Martin Rodriguez', '20412589632', 'martin.rodriguez@email.com', '+54-388-5112233', 'Agropecuaria Las Yungas SA', 'Ruta 9 Km 14', NULL, TIMESTAMP '2026-01-15 14:20:00', TIMESTAMP '2026-01-15 14:20:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000006'), 'Sofia Martinez', '27402587415', 'sofia.martinez@email.com', '+54-388-4876543', 'Martinez Joyeria Artesanal', 'Guemes 315', NULL, TIMESTAMP '2026-01-18 16:00:00', TIMESTAMP '2026-01-18 16:00:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000007'), 'Gonzalo Morales', '20336589417', 'gonzalo.morales@email.com', '+54-388-6445566', 'Morales Logistica y Carga SRL', 'Lavalle 512', NULL, TIMESTAMP '2026-01-20 08:45:00', TIMESTAMP '2026-01-20 08:45:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000008'), 'Valeria Gomez', '27347896521', 'valeria.gomez@email.com', '+54-388-4334455', 'Gomez & Asociados Contables', 'Independencia 780', NULL, TIMESTAMP '2026-01-22 10:10:00', TIMESTAMP '2026-01-22 10:10:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000009'), 'Diego Armando Ruiz', '20329874126', 'diego.ruiz@email.com', '+54-388-5778899', 'Ruiz Autopartes Jujuy', 'Gorriti 210', NULL, TIMESTAMP '2026-01-25 12:30:00', TIMESTAMP '2026-01-25 12:30:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000010'), 'Camila Benitez', '27421478529', 'camila.benitez@email.com', '+54-388-4667788', 'Benitez Indumentaria Urbana', 'Necochea 645', NULL, TIMESTAMP '2026-01-28 15:15:00', TIMESTAMP '2026-01-28 15:15:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000011'), 'Joaquin Silva', '20378965410', 'joaquin.silva@email.com', '+54-388-6119900', 'Silva Consultora Financiera', 'Urquiza 930', NULL, TIMESTAMP '2026-02-01 09:00:00', TIMESTAMP '2026-02-01 09:00:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000012'), 'Agustina Diaz', '27396541236', 'agustina.diaz@email.com', '+54-388-4223344', 'Diaz Gastronomia Andina SAS', 'Balcarce 150', NULL, TIMESTAMP '2026-02-03 11:10:00', TIMESTAMP '2026-02-03 11:10:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000013'), 'Federico Romero', '20398741258', 'federico.romero@email.com', '+54-388-5336677', 'Romero Electricidad Industrial', 'Otero 240', NULL, TIMESTAMP '2026-02-06 13:40:00', TIMESTAMP '2026-02-06 13:40:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000014'), 'Florencia Herrera', '27331245674', 'florencia.herrera@email.com', '+54-388-4771122', 'Herrera Marketing Digital', 'Ramirez de Velazco 330', NULL, TIMESTAMP '2026-02-09 16:50:00', TIMESTAMP '2026-02-09 16:50:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000015'), 'Nicolas Castro', '20435689123', 'nicolas.castro@email.com', '+54-388-6882233', 'Castro Seguridad Privada SRL', 'Alberdi 550', NULL, TIMESTAMP '2026-02-12 08:20:00', TIMESTAMP '2026-02-12 08:20:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000016'), 'Paula Ortiz', '27358963217', 'paula.ortiz@email.com', '+54-388-4448899', 'Ortiz Optica y Salud Visual', 'Senador Perez 180', NULL, TIMESTAMP '2026-02-15 10:35:00', TIMESTAMP '2026-02-15 10:35:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000017'), 'Tomas Gutierrez', '20369852145', 'tomas.gutierrez@email.com', '+54-388-5664411', 'Gutierrez Impresiones 3D', 'Patricias Argentinas 410', NULL, TIMESTAMP '2026-02-18 14:00:00', TIMESTAMP '2026-02-18 14:00:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000018'), 'Daniela Alvarez', '27415263742', 'daniela.alvarez@email.com', '+54-388-4993322', 'Alvarez Eventos y Catering', 'Juana Manuela Gorriti 890', NULL, TIMESTAMP '2026-02-21 17:15:00', TIMESTAMP '2026-02-21 17:15:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000019'), 'Ramiro Mendez', '20314785239', 'ramiro.mendez@email.com', '+54-388-6225588', 'Mendez Ferreteria Mayorista SA', 'Av. El Exodo 290', NULL, TIMESTAMP '2026-02-24 09:40:00', TIMESTAMP '2026-02-24 09:40:00'),
-      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000020'), 'Julieta Navarro', '27374125890', 'julieta.navarro@email.com', '+54-388-4115599', 'Navarro Estudio Juridico', 'San Martin 490', NULL, TIMESTAMP '2026-02-27 12:00:00', TIMESTAMP '2026-02-27 12:00:00');
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000001'), 'Esteban Quito', '20-35412879-4', 'esteban.quito@gmail.com', '+54-388-4123456', 'Esteban Quito Servicios Informáticos', 'Av. Fascio 650', NULL, TIMESTAMP '2026-01-05 08:30:00', TIMESTAMP '2026-01-05 08:30:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000002'), 'Mariana Lopez', '27-38965412-8', 'mariana.lopez@gmail.com', '+54-388-5987654', 'Lopez Diseños Gráficos SRL', 'Belgrano 1024', NULL, TIMESTAMP '2026-01-07 09:15:00', TIMESTAMP '2026-01-07 09:15:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000003'), 'Carlos Tévez', '20-30124578-9', 'carlos.tevez@hotmail.com', '+54-388-6321456', 'Transportes del Norte SA', 'Alvear 430', NULL, TIMESTAMP '2026-01-10 10:00:00', TIMESTAMP '2026-01-10 10:00:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000004'), 'Lucia Fernandez', '27-36521478-3', 'lucia.fernandez@gmail.com', '+54-388-4981234', 'Fernandez Arquitectura SAS', 'San Martin 820', NULL, TIMESTAMP '2026-01-12 11:45:00', TIMESTAMP '2026-01-12 11:45:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000005'), 'Martin Rodriguez', '20-41258963-2', 'martin.rodriguez@gmail.com', '+54-388-5112233', 'Agropecuaria Las Yungas SA', 'Ruta 9 Km 14', NULL, TIMESTAMP '2026-01-15 14:20:00', TIMESTAMP '2026-01-15 14:20:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000006'), 'Sofia Martinez', '27-40258741-5', 'sofia.martinez@outlook.com', '+54-388-4876543', 'Martinez Joyería Artesanal', 'Güemes 315', NULL, TIMESTAMP '2026-01-18 16:00:00', TIMESTAMP '2026-01-18 16:00:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000007'), 'Gonzalo Morales', '20-33658941-7', 'gonzalo.morales@gmail.com', '+54-388-6445566', 'Morales Logística y Carga SRL', 'Lavalle 512', NULL, TIMESTAMP '2026-01-20 08:45:00', TIMESTAMP '2026-01-20 08:45:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000008'), 'Valeria Gomez', '27-34789652-1', 'valeria.gomez@hotmail.com', '+54-388-4334455', 'Gomez & Asociados Contables', 'Independencia 780', NULL, TIMESTAMP '2026-01-22 10:10:00', TIMESTAMP '2026-01-22 10:10:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000009'), 'Diego Armando Ruiz', '20-32987412-6', 'diego.ruiz@yahoo.com', '+54-388-5778899', 'Ruiz Autopartes Jujuy', 'Gorriti 210', NULL, TIMESTAMP '2026-01-25 12:30:00', TIMESTAMP '2026-01-25 12:30:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000010'), 'Camila Benitez', '27-42147852-9', 'camila.benitez@gmail.com', '+54-388-4667788', 'Benitez Indumentaria Urbana', 'Necochea 645', NULL, TIMESTAMP '2026-01-28 15:15:00', TIMESTAMP '2026-01-28 15:15:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000011'), 'Joaquin Silva', '20-37896541-0', 'joaquin.silva@gmail.com', '+54-388-6119900', 'Silva Consultora Financiera', 'Urquiza 930', NULL, TIMESTAMP '2026-02-01 09:00:00', TIMESTAMP '2026-02-01 09:00:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000012'), 'Agustina Diaz', '27-39654123-6', 'agustina.diaz@gmail.com', '+54-388-4223344', 'Diaz Gastronomía Andina SAS', 'Balcarce 150', NULL, TIMESTAMP '2026-02-03 11:10:00', TIMESTAMP '2026-02-03 11:10:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000013'), 'Federico Romero', '20-39874125-8', 'federico.romero@hotmail.com', '+54-388-5336677', 'Romero Electricidad Industrial', 'Otero 240', NULL, TIMESTAMP '2026-02-06 13:40:00', TIMESTAMP '2026-02-06 13:40:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000014'), 'Florencia Herrera', '27-33124567-4', 'florencia.herrera@gmail.com', '+54-388-4771122', 'Herrera Marketing Digital', 'Ramirez de Velázco 330', NULL, TIMESTAMP '2026-02-09 16:50:00', TIMESTAMP '2026-02-09 16:50:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000015'), 'Nicolas Castro', '20-43568912-3', 'nicolas.castro@gmail.com', '+54-388-6882233', 'Castro Seguridad Privada SRL', 'Alberdi 550', NULL, TIMESTAMP '2026-02-12 08:20:00', TIMESTAMP '2026-02-12 08:20:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000016'), 'Paula Ortiz', '27-35896321-7', 'paula.ortiz@gmail.com', '+54-388-4448899', 'Ortiz Óptica y Salud Visual', 'Senador Perez 180', NULL, TIMESTAMP '2026-02-15 10:35:00', TIMESTAMP '2026-02-15 10:35:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000017'), 'Tomas Gutierrez', '20-36985214-5', 'tomas.gutierrez@gmail.com', '+54-388-5664411', 'Gutierrez Impresiones 3D', 'Patricias Argentinas 410', NULL, TIMESTAMP '2026-02-18 14:00:00', TIMESTAMP '2026-02-18 14:00:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000018'), 'Daniela Alvarez', '27-41526374-2', 'daniela.alvarez@gmail.com', '+54-388-4993322', 'Alvarez Eventos y Catering', 'Juana Manuela Gorriti 890', NULL, TIMESTAMP '2026-02-21 17:15:00', TIMESTAMP '2026-02-21 17:15:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000019'), 'Ramiro Mendez', '20-31478523-9', 'ramiro.mendez@hotmail.com', '+54-388-6225588', 'Mendez Ferretería Mayorista SA', 'Av. El Éxodo 290', NULL, TIMESTAMP '2026-02-24 09:40:00', TIMESTAMP '2026-02-24 09:40:00'),
+      (UUID_TO_BIN('a0000001-0000-0000-0000-000000000020'), 'Julieta Navarro', '27-37412589-0', 'julieta.navarro@outlook.com', '+54-388-4115599', 'Navarro Estudio Jurídico', 'San Martin 490', NULL, TIMESTAMP '2026-02-27 12:00:00', TIMESTAMP '2026-02-27 12:00:00');
 
 -- -----------------------------------------------------------------------------
 -- 2. TABLA: cuentas_bancarias (18 registros mezclando CAJA_AHORRO y CUENTA_CORRIENTE)
@@ -71,7 +71,7 @@ INSERT INTO cuentas_bancarias (
 
 -- -----------------------------------------------------------------------------
 -- 3. TABLA: transacciones (32 registros)
--- Incluye: fecha_hora, cuenta_bancaria_id, fecha_creacion y `ultima-modificacion`
+-- Incluye: fecha_hora, cuenta_bancaria_id, fecha_creacion y `fecha_ltima_modificacion`
 -- -----------------------------------------------------------------------------
 INSERT INTO transacciones (
     id,
