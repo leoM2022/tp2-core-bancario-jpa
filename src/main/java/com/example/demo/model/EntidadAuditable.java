@@ -40,9 +40,9 @@ public abstract class EntidadAuditable {
     private LocalDateTime fechaCreacion;
 
     /**
-     * Fecha y hora de la ultia modificacion de la entidad.
+     * Fecha y hora de la ultima modificación de la entidad.
      */
     @LastModifiedDate
-    @Column(name = "ultima-modificacion")
+    @Column(name = "fecha_ultima_modificacion")
     private LocalDateTime UltimaModificacion;
 }

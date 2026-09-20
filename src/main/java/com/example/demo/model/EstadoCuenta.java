@@ -1,9 +1,10 @@
 package com.example.demo.model;
 
 /**
- * Enumeracion que representa los estados posibles de una cuenta bancaria
+ * Enumeración que representa los estados posibles de una cuenta bancaria.
  *
  * @see CuentaBancaria
+ * @version 1.0.0
  * @author Dyevara23 & leoM2022
  */
 public enum EstadoCuenta {

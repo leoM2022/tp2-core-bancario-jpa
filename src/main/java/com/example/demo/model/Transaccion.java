@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Entidad destinada a representar cada transaccion realizada por X cuenta bancaria
+ * Entidad destinada a representar cada transacción realizada por X cuenta bancaria
  * <p>
  *     Tiene las siguientes relaciones con otras Entidades:
  *     <ul>
@@ -20,6 +20,7 @@ import java.util.UUID;
  * </p>
  *
  * @see CuentaBancaria
+ * @version 1.0.0
  * @author Dyevara23 & leoM2022
  */
 @Entity
@@ -31,7 +32,7 @@ import java.util.UUID;
 public class Transaccion extends EntidadAuditable{
 
     /**
-     * Identificador unico de la transaccion
+     * Identificador único de la transacción.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -39,19 +40,19 @@ public class Transaccion extends EntidadAuditable{
     private UUID idTransaccion;
 
     /**
-     * Fecha y Hora de la transaccion
+     * Fecha y Hora de la transacción.
      */
     @Column(name = "fecha_hora",nullable = false, updatable = false)
     private LocalDateTime fechaHora;
 
     /**
-     * Monto total de la transaccion
+     * Monto total de la transacción.
      */
     @Column(name = "monto", nullable = false, precision = 15, scale = 2)
     private BigDecimal monto;
 
     /**
-     * Tipo de transaccion: DEPOSITO, EXTRACCION, TRANSFERENCIA_ENVIADA,
+     * Tipo de transacción: DEPOSITO, EXTRACCIÓN, TRANSFERENCIA_ENVIADA,
      * TRANSFERENCIA_RECIBIDA
      */
     @Enumerated(EnumType.STRING)
@@ -59,7 +60,7 @@ public class Transaccion extends EntidadAuditable{
     private TipoTransaccion tipoTransaccion;
 
     /**
-     * Estado de la transaccion: PENDIENTE,
+     * Estado de la transacción: PENDIENTE,
      * COMPLETADA, RECHAZADA, REVERTIDA
      */
     @Enumerated(EnumType.STRING)
@@ -67,7 +68,7 @@ public class Transaccion extends EntidadAuditable{
     private EstadoTransaccion estadoTransaccion;
 
     /**
-     * Cuenta Bancaria sobre la cual se realiza la transaccion.
+     * Cuenta Bancaria sobre la cual se realiza la transacción.
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cuenta_bancaria_id", nullable = false)
