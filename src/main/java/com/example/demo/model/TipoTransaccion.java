@@ -4,9 +4,10 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
 /**
- * Enumeracion que representa los estados posibles de una transaccion.
+ * Enumeración que representa los estados posibles de una transacción.
  *
  * @see Transaccion
+ * @version 1.0.0
  * @author Dyevara23 & leoM2022
  */
 public enum TipoTransaccion {

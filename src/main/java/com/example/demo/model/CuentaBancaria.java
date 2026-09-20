@@ -1,8 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,13 +14,14 @@ import java.util.UUID;
  * <p>
  *     Esta misma entidad tiene las siguientes relaciones:
  *     <ul>
- *         <li>N:1 con Cliente: un cliente puede ser titular de mas de una cuenta bancaria.</li>
+ *         <li>N:1 con Cliente: un cliente puede ser titular de más de una cuenta bancaria.</li>
  *         <li>1:M con Transaccion: Una cuenta bancaria esta asociada a multiples transacciones</li>
  *     </ul>
  * </p>
  *
  * @see Cliente
  * @see Transaccion
+ * @version 1.0.0
  * @author Dyevara23 & leoM2022
  */
 @Builder
@@ -36,7 +37,7 @@ import java.util.UUID;
 public class CuentaBancaria extends EntidadAuditable{
 
     /**
-     * Identificador unico de la cuenta bancaria.
+     * Identificador único de la cuenta bancaria.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,7 +46,7 @@ public class CuentaBancaria extends EntidadAuditable{
 
     /**
      * Clave Bancaria Uniforme correspondiente a la cuenta. Solo puede
-     * contener numeros y tiene longitud de 22 caracteres.
+     * contener números y tiene longitud de 22 caracteres.
      */
     @Column(nullable = false, length = 22, unique = true, updatable = false)
     @Pattern(regexp = "\\d{22}", message = "El CBU solo puede contener números")
@@ -53,7 +54,7 @@ public class CuentaBancaria extends EntidadAuditable{
 
     /**
      * Alias correspondiente a la cuenta bancaria. Debe tener entre 6 y 20 caracteres y
-     * solo puede contener letras, numeros, guion/es y punto/s.
+     * solo puede contener letras, números, guion/es y punto/s.
      */
     @Column(nullable = false, length = 20, unique = true)
     @Pattern(

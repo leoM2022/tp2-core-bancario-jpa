@@ -21,6 +21,7 @@ import java.util.UUID;
  *
  * @see EntidadAuditable
  * @see CuentaBancaria
+ * @version 1.0.0
  * @author Dyevara23 & leoM2022
  */
 @Entity
@@ -33,7 +34,7 @@ import java.util.UUID;
 public class Cliente extends EntidadAuditable{
 
     /**
-     * Identificador unico del cliente
+     * Identificador único del cliente.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,9 +42,9 @@ public class Cliente extends EntidadAuditable{
     private UUID id;
 
     /**
-     * CUIL unico del cliente en formato: XX-XXXXXXXX-X
+     * CUIL único del cliente en formato: XX-XXXXXXXX-X.
      */
-    @Column(nullable = false, unique = true, length = 11)
+    @Column(nullable = false, unique = true, length = 13)
     @Pattern(regexp = "^(20|27|23|24)-\\d{8}-\\d$", message = "El cuil debe estar en formato: XX-XXXXXXXX-X")
     private String cuil;
 
@@ -54,41 +55,41 @@ public class Cliente extends EntidadAuditable{
     private String nombre;
 
     /**
-     * Razon social del cliente
+     * Razón social del cliente.
      */
     @Column(name = "razon_social", nullable = false, length = 150)
     private String razonSocial;
 
     /**
-     * Direccion del cliente (formato: CALLE, ALTURA, BARRIO, LOCALIDAD, PROVINCIA, PAIS)
+     * Dirección del cliente.
      */
     @Column(nullable = false, length = 100)
     private String direccion;
 
     /**
-     * Numero telefonico del cliente
+     * Numero telefónico del cliente.
      */
     @Column(nullable = false, length = 15)
     @Pattern(regexp = "^[+54-][1-9]{1,4}-[0-9]", message = "Formato de numero telefonico invalido")
     private String telefono;
 
     /**
-     * Correo electronico del cliente
+     * Correo electrónico del cliente.
      */
     @Column(nullable = false, length = 30)
     @Pattern(regexp = "^[a-bA-B][a-bA-B0-9.](@gmail.com|@hotmail.com|@outlook.com|@yahoo.com)$", message = "Formato de email invalido")
     private String email;
 
     /**
-     * Multiples cuentas asociadas a un cliente
-     * Mapeo bidireccional y eliminacion en cascada y de huerfanos
+     * Multiples cuentas asociadas a un cliente.
+     * Mapeo bidireccional y eliminación en cascada y de huérfanos.
      */
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<CuentaBancaria> cuentas = new ArrayList<>();
 
     /**
-     * RELACION REFLEXIVA: Un grupo de clientes comparten una cuenta bancaria
+     * RELACIÓN REFLEXIVA: Un grupo de clientes comparten una cuenta bancaria
      * de los cuales uno es el tutor.
      */
     @ManyToOne(fetch = FetchType.LAZY)
