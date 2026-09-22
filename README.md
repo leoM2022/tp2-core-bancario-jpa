@@ -1,4 +1,4 @@
-# Trabajo Práctico N°3 - Sistema de Gestión Bancaria
+# Sistema de Gestión Bancaria
 
 **Universidad Nacional de Jujuy**  
 **Cátedra:** Desarrollo y Arquitectura Avanzada de Software
