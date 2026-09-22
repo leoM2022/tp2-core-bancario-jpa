@@ -1,52 +1,93 @@
-# Sistema de Gestión Bancaria
+# Sistema de Gestión Bancaria (Core Bancario JPA)
 
-**Universidad Nacional de Jujuy**  
-**Cátedra:** Desarrollo y Arquitectura Avanzada de Software
+* **Institución:** Universidad Nacional de Jujuy (UNJu).
+* **Cátedra:** Desarrollo y Arquitectura Avanzada de Software (DAAS).
+* **Repositorio Remoto:** [tp2-core-bancario-jpa](https://github.com/leoM2022/tp2-core-bancario-jpa)
 
 ---
 
-## 👥 Equipo de Desarrollo
-* **Leandro Mamani**
-* **Héctor Daniel Yevara**
+## 👥 Equipo de Desarrollo y Roles
+
+* **Héctor Daniel Yevara (Dyevara23):** Desarrollador 1.
+  * **Rama de trabajo:** `feature/domain-audit-entities`
+  * **Responsabilidades:** Modelado del dominio JPA, jerarquía de herencia relacional, superclase de auditoría, enumeraciones y restricciones Bean Validation.
+
+* **Leandro Mamani (leoM2022):** Desarrollador 2.
+  * **Rama de trabajo:** `feature/services-and-dtos`
+  * **Responsabilidades:** Servicios de aplicación transaccionales (`@Transactional`), excepciones de negocio, desacoplamiento y pruebas unitarias aisladas con Mockito.
 
 ---
 
 ## 📝 Descripción del Proyecto
-Este proyecto implementa el núcleo (Core) de un sistema de gestión financiera basado en una arquitectura en capas. El dominio principal abarca la administración integral de clientes, el manejo de diferentes tipos de cuentas bancarias (Cajas de Ahorro y Cuentas Corrientes) y el procesamiento seguro de transacciones.
 
-El diseño prioriza la integridad transaccional, el manejo riguroso de excepciones y la validación estricta de reglas de negocio operativas (como el control de saldos y márgenes de descubierto).
+* **Propósito Central:** Implementación del núcleo transaccional (**Core Bancario**) aplicando principios de diseño desacoplado y Clean Code.
+* **Dominio Administrado:**
+  * **Gestión integral de clientes:** Personas físicas y jurídicas con validación fiscal de unicidad (**CUIL** y **correo electrónico**).
+  * **Catálogo polimórfico de productos financieros:** Cajas de Ahorro y Cuentas Corrientes con margen de giro en descubierto.
+  * **Registro y orquestación de movimientos monetarios:** Depósitos y extracciones garantizando integridad relacional y atomicidad.
 
 ---
 
 ## 🛠️ Stack Tecnológico y Arquitectura
-El sistema está desarrollado aplicando principios SOLID y buenas prácticas de codificación (Clean Code).
 
-* **Plataforma:** Java (Spring Boot)
-* **Persistencia de Datos:** Spring Data JPA / Hibernate
-* **Estructura de Datos:** Inicialización automatizada a través de `data.sql` y configuración en `application.yml`.
-* **Testing:** Pruebas unitarias aisladas utilizando JUnit 5 y Mockito.
+* **Lenguaje:** Java 17 LTS (OpenJDK).
+* **Framework Principal:** Spring Boot 3.3.4 (módulos Data JPA, Web, Validation).
+* **Capa de Persistencia:** Hibernate ORM 6.5.x sobre motor relacional MySQL 8.x.
+* **Pruebas y Verificación:** JUnit 5 y Mockito para testing unitario en memoria.
 
-### Diseño en Capas
-1. **Model/Entities:** Clases de dominio ricas (`Cliente`, `CuentaBancaria`, `Transaccion`) que extienden de `EntidadAuditable` para el seguimiento de cambios.
-2. **Repository:** Interfaces de acceso a datos encapsulando consultas específicas.
-3. **Service:** Lógica de negocio centralizada con control transaccional (`@Transactional`).
-4. **Exception:** Manejo personalizado de errores (`RecursoNoEncontradoException`, `RecursoDuplicadoException`).
+### Estructura en Capas
 
----
-
-## ⚙️ Características Principales
-
-### Gestión de Clientes
-* Operaciones CRUD completas.
-* Validaciones de unicidad a nivel de servicio para atributos críticos (CUIL y Correo Electrónico).
-
-### Operaciones Financieras
-* **Cuentas Soportadas:** Manejo polimórfico de `CajaAhorro` y `CuentaCorriente`.
-* **Depósitos y Extracciones:** Lógica transaccional que previene condiciones de carrera e inconsistencias.
-* **Descubiertos:** Soporte dinámico para márgenes de descubierto en cuentas corrientes.
-* **Estados:** Validación estricta del `EstadoCuenta` (ej. Activa/Bloqueada) previo a cualquier movimiento de fondos.
+* **Capa Model/Entities:** Clases de dominio enriquecidas que heredan de `EntidadAuditable` para trazabilidad de creación y modificación.
+* **Capa Repository:** Interfaces Spring Data JPA con métodos derivados (`findByCuil`, `findByEmail`, `findByCbu`) y consultas optimizadas.
+* **Capa Service:** Servicios sin estado (*stateless*) gobernados por demarcación declarativa (`@Transactional`).
+* **Capa Exception:** Errores de negocio no chequeados (`RecursoDuplicadoException`, `RecursoNoEncontradoException`).
 
 ---
 
-## 🧪 Pruebas y Cobertura
-El proyecto cuenta con un conjunto de pruebas unitarias enfocadas en la capa de servicios (`ClienteServiceTest`, `CuentaBancariaServiceTest`). Los tests validan el comportamiento ante escenarios de éxito y garantizan que las restricciones del negocio levanten las excepciones adecuadas ante datos inválidos o fondos insuficientes.
+## 📁 Estructura Física del Proyecto
+
+* 📁 **tp2-core-bancario-jpa/**
+  * 📁 **src/main/java/com/example/demo/**
+    * 📁 **exception/** — Excepciones de negocio personalizadas
+    * 📁 **model/** — Clases de dominio, auditoría y enums
+    * 📁 **repository/** — Interfaces de persistencia JPA
+    * 📁 **service/** — Contratos de servicio y sus implementaciones (`impl/`)
+  * 📁 **src/main/resources/** — `application.yml` y scripts de inicialización SQL
+  * 📁 **src/test/java/.../** — Pruebas unitarias de servicios con Mockito
+  * 📄 **pom.xml** — Descriptor de dependencias y compilador Maven
+  * 📄 **README.md** — Documentación técnica del proyecto
+
+---
+
+## 🌿 Flujo de Ramas (Git Flow)
+
+* **Rama `main`:** Versión estable, consolidada y evaluable del producto.
+* **Rama `develop`:** Rama base de integración continua donde convergen las funcionalidades del equipo.
+* **Rama `feature/domain-audit-entities`:** Desarrollador 1 (persistencia, entidades y auditoría).
+* **Rama `feature/services-and-dtos`:** Desarrollador 2 (servicios, transaccionalidad y tests unitarios).
+
+---
+
+## ⚙️ Características Operativas
+
+* **Gestión de Clientes:** Altas seguras con comprobación previa de duplicados y listados paginados (`Pageable`) para evitar saturación de memoria en la JVM.
+* **Operaciones de Cuentas:** Depósitos y extracciones atómicas con validación obligatoria del estado activo de la cuenta.
+* **Cálculo de Fondos:** En cuentas corrientes, la disponibilidad de saldo se evalúa sumando dinámicamente el margen de descubierto asignado.
+* **Estrategia Relacional:** Herencia unificada bajo `SINGLE_TABLE` sobre la tabla `cuentas_bancarias` con columna discriminadora `tipo_cuenta` para maximizar el rendimiento.
+
+---
+
+## 🧪 Pruebas Unitarias (Testing)
+
+* **Aislamiento Absoluto:** Verificación de métodos sin levantar el contexto de Spring Boot ni requerir conexión física a bases de datos.
+* **Dobles de Prueba:** Uso de `@Mock` para repositorios JPA y simulación de escenarios mediante `when(...).thenReturn(...)`.
+* **Suites Incluidas:**
+  * **`ClienteServiceTest`:** Comprobación de alta exitosa, control de colisiones por CUIL duplicado y búsquedas por identificador UUID.
+  * **`CuentaBancariaServiceTest`:** Verificación de acreditación de fondos, extracciones válidas con descubierto y rechazo ante saldo insuficiente.
+
+---
+
+## 🚀 Comandos de Construcción y Ejecución
+* **Compilar y Ejecutar Pruebas Unitarias:**
+  ```bash
+  ./mvnw clean test
