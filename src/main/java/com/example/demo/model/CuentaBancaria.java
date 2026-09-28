@@ -49,7 +49,6 @@ public class CuentaBancaria extends EntidadAuditable{
      * contener números y tiene longitud de 22 caracteres.
      */
     @Column(nullable = false, length = 22, unique = true, updatable = false)
-    @Pattern(regexp = "\\d{22}", message = "El CBU solo puede contener números")
     private String cbu;
 
     /**
@@ -57,10 +56,6 @@ public class CuentaBancaria extends EntidadAuditable{
      * solo puede contener letras, números, guion/es y punto/s.
      */
     @Column(nullable = false, length = 20, unique = true)
-    @Pattern(
-            regexp = "^[a-zA-Z0-9.-]{6,20}$",
-            message = "El alias debe tener entre 6 y 20 caracteres y solo puede contener letras, números, puntos y guiones"
-    )
     private String alias;
 
     /**

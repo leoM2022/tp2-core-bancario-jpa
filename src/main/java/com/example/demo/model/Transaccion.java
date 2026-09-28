@@ -56,8 +56,19 @@ public class Transaccion extends EntidadAuditable{
      * TRANSFERENCIA_RECIBIDA
      */
     @Enumerated(EnumType.STRING)
-
     private TipoTransaccion tipoTransaccion;
+
+    /**
+     * Cuenta Origen de la transacción.
+     */
+    @Column(name = "cuenta_origen", nullable = false)
+    private CuentaBancaria cuentaOrigen;
+
+    /**
+     * Cuenta Destino de la transacción.
+     */
+    @Column(name = "cuenta_destino",nullable = false)
+    private CuentaBancaria cuentaDestino;
 
     /**
      * Estado de la transacción: PENDIENTE,
