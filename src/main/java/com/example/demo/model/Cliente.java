@@ -45,7 +45,7 @@ public class Cliente extends EntidadAuditable{
      * CUIL único del cliente en formato: XX-XXXXXXXX-X.
      */
     @Column(nullable = false, unique = true, length = 13)
-    @Pattern(regexp = "^(20|27|23|24)-\\d{8}-\\d$", message = "El cuil debe estar en formato: XX-XXXXXXXX-X")
+
     private String cuil;
 
     /**
@@ -70,14 +70,12 @@ public class Cliente extends EntidadAuditable{
      * Numero telefónico del cliente.
      */
     @Column(nullable = false, length = 15)
-    @Pattern(regexp = "^[+54-][1-9]{1,4}-[0-9]", message = "Formato de numero telefonico invalido")
     private String telefono;
 
     /**
      * Correo electrónico del cliente.
      */
     @Column(nullable = false, length = 30)
-    @Pattern(regexp = "^[a-bA-B][a-bA-B0-9.](@gmail.com|@hotmail.com|@outlook.com|@yahoo.com)$", message = "Formato de email invalido")
     private String email;
 
     /**
