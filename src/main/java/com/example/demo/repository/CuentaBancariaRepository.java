@@ -30,4 +30,7 @@ public interface CuentaBancariaRepository extends JpaRepository<CuentaBancaria, 
      */
     Optional<CuentaBancaria>findByAlias(String alias);
 
+    boolean existsByCbu(String cbu);
+
+    boolean existsByAlias(String alias);
 }

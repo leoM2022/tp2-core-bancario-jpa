@@ -25,7 +25,7 @@ public class ClienteRequestDto {
      */
     @NotBlank(message = "El campo no puede estar en blanco.")
     @Size(max = 100, message = "El nombre no debe superar los 100 caracteres.")
-    @Pattern(regexp = "^[A-Z][a-z]$", message = "El nombre solo puede contener letras.")
+    //@Pattern(regexp = "^[A-Z][a-z]$", message = "El nombre solo puede contener letras.")
     private String nombre;
 
     /**

@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.SaldoInsuficienteException;
 import com.example.demo.model.CuentaBancaria;
 import com.example.demo.model.CuentaCorriente;
 import com.example.demo.model.EstadoCuenta;
@@ -118,7 +119,7 @@ class CuentaBancariaServiceTest {
         when(cuentaRepository.findById(idCuenta)).thenReturn(Optional.of(cuentaPrueba));
 
         // Intento de extraer 20000 cuando el maximo con descubierto es 15000:
-        assertThrows(IllegalStateException.class, () -> cuentaService.extraer(idCuenta, new BigDecimal("20000.00")));
+        assertThrows(SaldoInsuficienteException.class, () -> cuentaService.extraer(idCuenta, new BigDecimal("20000.00")));
         verify(cuentaRepository, never()).save(any(CuentaBancaria.class));
     }
 }
