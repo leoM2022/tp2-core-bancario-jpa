@@ -3,28 +3,25 @@ spring:
     name: demo
 
   datasource:
-    url: jdbc:mysql://localhost:3306/banco_tp2?createDatabaseIfNotExist=true&serverTimezone=UTC
-    username: banco_user
-    password: admin123
+    url: ${DB_URL:jdbc:mysql://localhost:3306/banco_tp2?createDatabaseIfNotExist=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:banco_user}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
-
-  sql:
-    init:
-      mode: always
+        dialect: org.hibernate.dialect.MySQLDialect
 
 logging:
   level:
     org:
       hibernate:
-        orm:
-          boot: DEBUG
-        tool:
-          schema: DEBUG
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

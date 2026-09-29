@@ -1,18 +1,10 @@
-/**
- * Implementación de la interfaz {@link ClienteService}.
- *
- * <p>Este servicio gestiona toda la lógica de negocio relacionada con la entidad {@link Cliente},
- * incluyendo la creación, recuperación, listado y eliminación de registros.
- * Interactúa directamente con {@link ClienteRepository} para las operaciones de persistencia de datos.</p>
- *
- * @version 1.0.0
- * @author Dyevara23 & leoM2022
- * @since 2026-09-21
- */
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.ClienteRequestDto;
+import com.example.demo.dto.ClienteResponseDto;
 import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
+import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.model.Cliente;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.service.ClienteService;
@@ -25,6 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+/**
+ * Implementación de la interfaz {@link ClienteService}.
+ *
+ * <p>Este servicio gestiona toda la lógica de negocio relacionada con la entidad {@link Cliente},
+ * incluyendo la creación, recuperación, listado y eliminación de registros, así como el desacoplamiento
+ * de entrada/salida para la API REST mediante objetos DTO.</p>
+ *
+ * @version 1.1.0
+ * @author Dyevara23 & leoM2022
+ * @since 2026-09-21
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -33,11 +36,36 @@ public class ClienteServiceImpl implements ClienteService {
     private final ClienteRepository clienteRepository;
 
     /**
-     * Persiste un nuevo cliente en el sistema.
+     * Registra un cliente en el sistema a partir de un DTO de entrada (TP4).
      *
-     * <p>Aplica reglas de negocio validando que el CUIL y el correo electrónico
-     * del cliente no se encuentren previamente registrados antes de proceder con
-     * la persistencia de la entidad.</p>
+     * @param requestDto DTO validado con los datos de entrada del cliente.
+     * @return DTO de salida con los datos públicos del cliente registrado.
+     * @throws RecursoDuplicadoException si el CUIL o el Email ya existen en la base de datos.
+     */
+    @Override
+    @Transactional
+    public ClienteResponseDto registrarClienteDto(ClienteRequestDto requestDto) {
+        log.info("Iniciando registro de cliente via DTO con CUIL: {}", requestDto.getCuil());
+
+        if (clienteRepository.findByCuil(requestDto.getCuil()).isPresent()) {
+            log.error("El CUIL {} ya se encuentra registrado", requestDto.getCuil());
+            throw new RecursoDuplicadoException("El CUIL " + requestDto.getCuil() + " ya se encuentra registrado.");
+        }
+
+        if (clienteRepository.findByEmail(requestDto.getEmail()).isPresent()) {
+            log.error("El correo {} ya se encuentra registrado", requestDto.getEmail());
+            throw new RecursoDuplicadoException("El correo electronico ya esta en uso.");
+        }
+
+        Cliente nuevoCliente = ClienteMapper.toEntity(requestDto);
+        Cliente clienteGuardado = clienteRepository.save(nuevoCliente);
+
+        log.info("Cliente registrado exitosamente desde DTO con ID: {}", clienteGuardado.getId());
+        return ClienteMapper.toResponseDto(clienteGuardado);
+    }
+
+    /**
+     * Persiste un nuevo cliente en el sistema a partir de la entidad directa (TP3).
      *
      * @param cliente El objeto {@link Cliente} que contiene los datos a registrar.
      * @return La instancia del {@link Cliente} persistido, incluyendo su ID generado.
@@ -94,8 +122,7 @@ public class ClienteServiceImpl implements ClienteService {
     /**
      * Obtiene una lista paginada de todos los clientes registrados en el sistema.
      *
-     * @param pageable Objeto {@link Pageable} que contiene la información de paginación
-     *                 (número de página, tamaño de la página y criterios de orden).
+     * @param pageable Objeto {@link Pageable} que contiene la información de paginación.
      * @return Una {@link Page} que contiene las entidades de clientes solicitadas.
      */
     @Override
@@ -106,9 +133,6 @@ public class ClienteServiceImpl implements ClienteService {
 
     /**
      * Elimina un cliente del sistema basándose en su identificador único.
-     *
-     * <p>El método verifica primero la existencia del cliente utilizando
-     * {@link #obtenerClientePorId(UUID)}. Si el cliente existe, procede con su eliminación física.</p>
      *
      * @param id El identificador único (UUID) del cliente que se desea eliminar.
      * @throws RecursoNoEncontradoException si el cliente a eliminar no se encuentra en el sistema.

@@ -1,0 +1,28 @@
+info:
+  name: 3 - Trasaccion
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: http://localhost:8080/api/v1/transacciones/transferir
+  body:
+    type: json
+    data: |-
+      {
+        "cuentaOrigen": {
+          "cbu": "1234567890123456789099"
+        },
+        "cuentaDestino": {
+          "cbu": "2222333344445555666677"
+        },
+        "monto": 5000.00
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
