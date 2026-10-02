@@ -1,20 +1,35 @@
 package com.example.demo.model;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
 /**
- * Enumeración que representa a los estados posibles que pasa a lo largo de su ciclo
- * de vida una Transaccion.
+ * Estados del ciclo de vida operacional y contable de una transacción financiera.
  *
- * @see Transaccion
- * @version 1.0.0
  * @author Dyevara23 & leoM2022
+ * @version 1.2.0
+ * @see Transaccion
  */
 public enum EstadoTransaccion {
-    @Enumerated(EnumType.STRING)
+    /**
+     * Transacción registrada pendiente de liquidación o compensación.
+     */
     PENDIENTE,
+
+    /**
+     * Transacción procesada y asentada exitosamente en el libro mayor de MySQL.
+     */
     COMPLETADA,
+
+    /**
+     * Operación abortada por insuficiencia de fondos o cuenta inactiva.
+     */
     RECHAZADA,
-    EXITOSA, REVERTIDA
+
+    /**
+     * Estado complementario para conciliación exitosa.
+     */
+    EXITOSA,
+
+    /**
+     * Operación compensada o revertida por contracargo administrativo.
+     */
+    REVERTIDA
 }

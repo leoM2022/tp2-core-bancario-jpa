@@ -1,46 +1,68 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.CuentaBancaria;
-import lombok.*;
+import com.example.demo.model.EstadoTransaccion;
+import com.example.demo.model.TipoTransaccion;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Data Trasnfer Object para la exposición pública de la entidad {@link com.example.demo.model.Transaccion}.
+ * Data Transfer Object (DTO) para la respuesta de operaciones y auditoría de transacciones.
+ * <p>
+ * Representación inmutable y segura que serializa los CBUs asociados y el estado final
+ * de la operación sin exponer el grafo de entidades de la base de datos.
+ * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.0.0
+ * @version 1.2.0
+ * @see TipoTransaccion
+ * @see EstadoTransaccion
  */
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TransaccionResponseDto {
+
     /**
-     * Identificador Único de la transacción.
+     * Identificador único universal (UUID) de la transacción generada.
      */
     private UUID idTransaccion;
 
     /**
-     * Cuenta Bancaria que emite la transacción
+     * CBU de la cuenta de origen.
      */
-    private CuentaBancaria cuentaOrigen;
+    private String cbuOrigen;
 
     /**
-     * Cuenta Bancaria que recibe la transacción.
+     * CBU de la cuenta de destino.
      */
-    private CuentaBancaria cuentaDestino;
+    private String cbuDestino;
 
     /**
-     * Monto de la transacción en BigDecimal.
+     * Monto asentado en la operación contable.
      */
     private BigDecimal monto;
 
     /**
-     * Fecha de emisión de la transacción.
+     * Naturaleza funcional de la transacción procesada.
      */
-    private LocalDateTime fechaCreacion;
+    private TipoTransaccion tipoTransaccion;
+
+    /**
+     * Estado final del procesamiento transaccional (EXITOSA, COMPLETADA, RECHAZADA).
+     */
+    private EstadoTransaccion estadoTransaccion;
+
+    /**
+     * Marca de tiempo exacta del registro en base de datos.
+     */
+    private LocalDateTime fechaHora;
 }

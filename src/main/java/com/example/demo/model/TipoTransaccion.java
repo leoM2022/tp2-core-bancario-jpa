@@ -1,20 +1,38 @@
 package com.example.demo.model;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
 /**
- * Enumeración que representa los estados posibles de una transacción.
+ * Catálogo de tipos operacionales de transacciones soportadas por el core financiero.
+ * <p>
+ * Modela la naturaleza contable de cada movimiento sobre cuentas bancarias.
+ * </p>
  *
- * @see Transaccion
- * @version 1.0.0
  * @author Dyevara23 & leoM2022
+ * @version 1.2.0
+ * @see Transaccion
  */
 public enum TipoTransaccion {
-    @Enumerated(EnumType.STRING)
+    /**
+     * Acreditación de fondos líquidos en una cuenta receptora.
+     */
     DEPOSITO,
-    EXTRACCION,
-    TRANSFERENCIA_ENVIADA,
-    TRANSFERENCIA, TRANSFERENCIA_RECIBIDA
-}
 
+    /**
+     * Débito de fondos líquidos contra el saldo o margen disponible de la cuenta.
+     */
+    EXTRACCION,
+
+    /**
+     * Movimiento global de giro entre cuenta origen y cuenta destino.
+     */
+    TRANSFERENCIA,
+
+    /**
+     * Registro de débito asociado al ordenante de una transferencia.
+     */
+    TRANSFERENCIA_ENVIADA,
+
+    /**
+     * Registro de crédito asociado al beneficiario de una transferencia.
+     */
+    TRANSFERENCIA_RECIBIDA
+}
