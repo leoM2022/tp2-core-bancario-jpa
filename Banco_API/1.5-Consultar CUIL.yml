@@ -1,14 +1,11 @@
 info:
-  name: 1.4-CrearNuevoCliente
+  name: 1.5-Consultar CUIL
   type: http
-  seq: 4
+  seq: 9
 
 http:
-  method: POST
-  url: http://localhost:8080/api/v1/clientes
-  body:
-    type: json
-    data: ""
+  method: GET
+  url: ""
   auth: inherit
 
 settings:

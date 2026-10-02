@@ -1,40 +1,59 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Entidad que representa a un cliente titular de una cuenta bancaria en el sistema bancario
+ * Entidad de dominio que modela al cliente titular o cotitular de cuentas bancarias.
  * <p>
- *      Esta misma mantiene las siguientes relaciones:
- *      <ul>
- *          <li>1:N con cuentas bancarias: un cliente puede tener muchas cuentas.</li>
- *          <li>M:1 con otros clientes: un grupo de clientes comparten una cuenta bancaria y uno de ellos es el tutor.</li>
- *          <li>1:M con otros clientes: un cliente es tutor y representa a un grupo de cotitulares que comparten la misma cuenta.</li>
- *      </ul>
+ * Representa el nodo central del módulo de gestión de clientes (CRM bancario).
+ * Administra las siguientes relaciones de persistencia:
+ * <ul>
+ *   <li><b>1:N con {@link CuentaBancaria}:</b> Un cliente puede poseer múltiples cuentas operativas.</li>
+ *   <li><b>Relación reflexiva N:1 (clienteTutor):</b> Permite asociar clientes menores o representados a un titular responsable.</li>
+ *   <li><b>Relación reflexiva 1:N (cotitulares):</b> Agrupa a los cotitulares dependientes de un tutor legal.</li>
+ * </ul>
  * </p>
  *
+ * @author Dyevara23 & leoM2022
+ * @version 1.2.0
  * @see EntidadAuditable
  * @see CuentaBancaria
- * @version 1.0.0
- * @author Dyevara23 & leoM2022
  */
 @Entity
+@Table(name = "clientes")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "clientes")
 @Builder
-public class Cliente extends EntidadAuditable{
+@EqualsAndHashCode(callSuper = false)
+public class Cliente extends EntidadAuditable {
 
     /**
-     * Identificador único del cliente.
+     * Clave primaria técnica autogenerada mediante identificador universal único (UUID).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,62 +61,73 @@ public class Cliente extends EntidadAuditable{
     private UUID id;
 
     /**
-     * CUIL único del cliente en formato: XX-XXXXXXXX-X.
+     * Clave Única de Identificación Tributaria/Laboral (CUIL/CUIT).
+     * Formato requerido por AFIP/ANSES: XX-XXXXXXXX-X.
      */
-    @Column(nullable = false, unique = true, length = 13)
-
+    @NotBlank(message = "El CUIL es obligatorio")
+    @Pattern(regexp = "^(20|23|24|27)-\\d{8}-\\d$", message = "El CUIL debe respetar el formato oficial XX-XXXXXXXX-X")
+    @Column(name = "cuil", nullable = false, unique = true, length = 13)
     private String cuil;
 
     /**
-     * Nombre y apellido del cliente
+     * Nombre y apellido completo o denominación física del titular.
      */
-    @Column(nullable = false, length = 50)
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 2, max = 50, message = "El nombre debe contener entre 2 y 50 caracteres")
+    @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
     /**
-     * Razón social del cliente.
+     * Razón social aplicable a cuentas comerciales o denominación legal complementaria.
      */
+    @NotBlank(message = "La razón social es obligatoria")
+    @Size(max = 150, message = "La razón social no puede exceder los 150 caracteres")
     @Column(name = "razon_social", nullable = false, length = 150)
     private String razonSocial;
 
     /**
-     * Dirección del cliente.
+     * Domicilio real o legal declarado por el cliente.
      */
-    @Column(nullable = false, length = 100)
+    @NotBlank(message = "La dirección postal es obligatoria")
+    @Size(max = 100, message = "La dirección no puede superar los 100 caracteres")
+    @Column(name = "direccion", nullable = false, length = 100)
     private String direccion;
 
     /**
-     * Numero telefónico del cliente.
+     * Línea telefónica de contacto en formato interurbano/móvil estándar (+54...).
      */
-    @Column(nullable = false, length = 15)
+    @NotBlank(message = "El teléfono de contacto es obligatorio")
+    @Pattern(regexp = "^\\+?[0-9]{1,3}[- ]?[0-9]{1,4}[- ]?[0-9]{4,8}$", message = "Formato telefónico inválido. Ejemplo aceptado: +54-388-1234567")
+    @Column(name = "telefono", nullable = false, length = 20)
     private String telefono;
 
     /**
-     * Correo electrónico del cliente.
+     * Dirección de correo electrónico validada bajo estructura estándar de internet.
      */
-    @Column(nullable = false, length = 30)
+    @NotBlank(message = "El correo electrónico es obligatorio")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "El correo electrónico debe ser una dirección válida")
+    @Column(name = "email", nullable = false, unique = true, length = 60)
     private String email;
 
     /**
-     * Multiples cuentas asociadas a un cliente.
-     * Mapeo bidireccional y eliminación en cascada y de huérfanos.
+     * Cuentas bancarias de las cuales este cliente es titular principal.
+     * Mapeo bidireccional con cascada total y remoción de registros huérfanos.
      */
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<CuentaBancaria> cuentas = new ArrayList<>();
 
     /**
-     * RELACIÓN REFLEXIVA: Un grupo de clientes comparten una cuenta bancaria
-     * de los cuales uno es el tutor.
+     * Referencia al tutor legal o titular representante en cuentas compartidas.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tutor")
     private Cliente clienteTutor;
 
     /**
-     * Un grupo de cotitulares son representados por un cliente con el rol de tutor.
+     * Lista de cotitulares asociados a este cliente en su rol de tutor o apoderado.
      */
     @OneToMany(mappedBy = "clienteTutor", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Cliente> cotitulares = new ArrayList<>();
-
 }

@@ -11,15 +11,14 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 /**
- * Interfaz de servicio principal para la gestión integral de la entidad {@link Cliente}.
+ * Contrato de operaciones de negocio para la gestión integral de la entidad {@link Cliente}.
+ * <p>
+ * Implementa el Patrón Servicio de Aplicación (Application Service), coordinando casos de uso
+ * del dominio bancario con persistencia transaccional ACID y desacoplamiento mediante contratos DTO.
+ * </p>
  *
- * <p>Define el contrato de operaciones de negocio bajo el patrón Application Service,
- * abarcando operaciones de dominio puro (entidades) y operaciones desacopladas
- * para consumo externo mediante contratos DTO (Data Transfer Object).</p>
- *
- * @version 1.1.0
  * @author Dyevara23 & leoM2022
- * @since 2026-09-21
+ * @version 1.2.0
  * @see Cliente
  * @see ClienteRequestDto
  * @see ClienteResponseDto
@@ -27,59 +26,54 @@ import java.util.UUID;
 public interface ClienteService {
 
     /**
-     * Registra un nuevo cliente a partir de un DTO validado desde la capa Controller (TP4).
+     * Registra un nuevo cliente titular a partir del payload validado recibido desde la API REST.
      *
-     * <p>Aplica las validaciones de unicidad de CUIL y Email, mapea la entidad correspondiente,
-     * la persiste en MySQL y retorna el DTO de respuesta desacoplado del modelo JPA.</p>
-     *
-     * @param requestDto Objeto de transferencia de datos con la carga útil validada de entrada.
-     * @return {@link ClienteResponseDto} con los datos públicos del cliente y su UUID asignado.
-     * @throws RecursoDuplicadoException si el CUIL o el Email ya se encuentran registrados.
+     * @param requestDto DTO con los datos de contacto y fiscales validados.
+     * @return {@link ClienteResponseDto} con el identificador UUID asignado y marca temporal.
+     * @throws RecursoDuplicadoException Si el CUIL o el correo electrónico ya se encuentran registrados.
      */
     ClienteResponseDto registrarClienteDto(ClienteRequestDto requestDto);
 
     /**
-     * Persiste un nuevo cliente en el sistema a partir de la entidad directa (TP3).
+     * Persiste una entidad {@link Cliente} directa asegurando las invariantes de negocio.
      *
-     * @param cliente El objeto {@link Cliente} que contiene los datos a guardar.
-     * @return La instancia del {@link Cliente} persistido, incluyendo su ID generado.
-     * @throws RecursoDuplicadoException si el CUIL o el Email ya existen en la base de datos.
+     * @param cliente Instancia de la entidad a persistir.
+     * @return Instancia persistida con identificador técnico asignado.
+     * @throws RecursoDuplicadoException Si existe conflicto de unicidad en CUIL o Email.
      */
     Cliente crearCliente(Cliente cliente);
 
     /**
-     * Recupera un cliente específico utilizando su identificador único (UUID).
+     * Localiza un cliente mediante su identificador único universal (UUID).
      *
-     * @param id El identificador único (UUID) del cliente a recuperar.
-     * @return El {@link Cliente} correspondiente al ID especificado.
-     * @throws RecursoNoEncontradoException si no existe cliente asociado al ID provisto.
+     * @param id Identificador UUID del cliente.
+     * @return Instancia de {@link Cliente} localizada.
+     * @throws RecursoNoEncontradoException Si no existe registro asociado al UUID provisto.
      */
     Cliente obtenerClientePorId(UUID id);
 
     /**
-     * Recupera un cliente utilizando su Código Único de Identificación Laboral (CUIL).
+     * Localiza un cliente a partir de su Clave Única de Identificación Laboral (CUIL).
      *
-     * @param cuil El CUIL exacto del cliente a buscar, en formato de cadena de texto.
-     * @return El {@link Cliente} asociado al CUIL proporcionado.
-     * @throws RecursoNoEncontradoException si no existe cliente con el CUIL especificado.
+     * @param cuil Código fiscal exacto en formato XX-XXXXXXXX-X.
+     * @return Instancia de {@link Cliente} encontrada.
+     * @throws RecursoNoEncontradoException Si no existe registro asociado al CUIL provisto.
      */
     Cliente obtenerClientePorCuil(String cuil);
 
     /**
-     * Obtiene una lista paginada de todos los clientes registrados en el sistema.
+     * Recupera una vista paginada de clientes para optimizar el rendimiento y evitar sobrecarga de memoria.
      *
-     * <p>Optimiza el rendimiento evitando la recuperación masiva en memoria RAM (antipatrón findAll).</p>
-     *
-     * @param pageable Objeto {@link Pageable} con la configuración de paginación y ordenamiento.
-     * @return Una {@link Page} conteniendo las entidades {@link Cliente} del lote solicitado.
+     * @param pageable Parámetros de paginación y ordenamiento.
+     * @return {@link Page} conteniendo el lote de clientes solicitado.
      */
     Page<Cliente> listarPaginado(Pageable pageable);
 
     /**
-     * Elimina un cliente del sistema basándose en su identificador único.
+     * Da de baja a un cliente del sistema a partir de su identificador UUID.
      *
-     * @param id El identificador único (UUID) del cliente que se desea eliminar.
-     * @throws RecursoNoEncontradoException si el cliente no existe en la base de datos.
+     * @param id Identificador del cliente a remover.
+     * @throws RecursoNoEncontradoException Si el cliente no existe en la base de datos.
      */
     void eliminarCliente(UUID id);
 }

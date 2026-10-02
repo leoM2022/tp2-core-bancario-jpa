@@ -4,32 +4,64 @@ import com.example.demo.dto.ClienteRequestDto;
 import com.example.demo.dto.ClienteResponseDto;
 import com.example.demo.model.Cliente;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+/**
+ * Clase utilitaria encargada de la transformación bidireccional entre el modelo de persistencia
+ * {@link Cliente} y los objetos de transferencia de datos {@link ClienteRequestDto} y {@link ClienteResponseDto}.
+ * <p>
+ * Implementa el patrón Data Mapper para aislar el dominio relacional de las capas externas de transporte (REST/JSON),
+ * evitando fugas de abstracción y problemas de recursión infinita en serializaciones bidireccionales.
+ * </p>
+ *
+ * @author Dyevara23 & leoM2022
+ * @version 1.1.0
+ * @see Cliente
+ * @see ClienteRequestDto
+ * @see ClienteResponseDto
+ */
 public final class ClienteMapper {
 
+    /**
+     * Constructor privado para prevenir la instanciación de una clase utilitaria puramente estática.
+     */
     private ClienteMapper() {
+        throw novelUnsupportedOperationException();
     }
 
+    private static UnsupportedOperationException novelUnsupportedOperationException() {
+        return new UnsupportedOperationException("ClienteMapper es una clase utilitaria estática y no debe ser instanciada.");
+    }
+
+    /**
+     * Transforma un {@link ClienteRequestDto} proveniente del controlador REST en una entidad {@link Cliente} lista para el dominio.
+     *
+     * @param dto Objeto de transferencia con los datos validados del cliente.
+     * @return Instancia de la entidad {@link Cliente} o null si el DTO es nulo.
+     */
     public static Cliente toEntity(ClienteRequestDto dto) {
         if (dto == null) {
             return null;
         }
 
-        Cliente cliente = new Cliente();
-        cliente.setNombre(dto.getNombre());
-        cliente.setEmail(dto.getEmail());
-        cliente.setCuil(dto.getCuil());
-        cliente.setTelefono(dto.getTelefono());
-        cliente.setRazonSocial(dto.getRazonSocial());
-        cliente.setDireccion(dto.getDireccion());
-        cliente.setCuentas(new ArrayList<>());
-        cliente.setCotitulares(new ArrayList<>());
-
-        return cliente;
+        return Cliente.builder()
+                .nombre(dto.getNombre().trim())
+                .email(dto.getEmail().trim().toLowerCase())
+                .cuil(dto.getCuil().trim())
+                .telefono(dto.getTelefono().trim())
+                .razonSocial(dto.getRazonSocial().trim())
+                .direccion(dto.getDireccion().trim())
+                .cuentas(new ArrayList<>())
+                .cotitulares(new ArrayList<>())
+                .build();
     }
 
+    /**
+     * Convierte una entidad de dominio persistida {@link Cliente} en su correspondiente {@link ClienteResponseDto}.
+     *
+     * @param entidad Instancia persistida de {@link Cliente} recuperada desde la base de datos.
+     * @return DTO representativo para serialización JSON pública o null si la entidad es nula.
+     */
     public static ClienteResponseDto toResponseDto(Cliente entidad) {
         if (entidad == null) {
             return null;
@@ -40,7 +72,10 @@ public final class ClienteMapper {
                 .nombre(entidad.getNombre())
                 .email(entidad.getEmail())
                 .cuil(entidad.getCuil())
-                .fechaCreacion(entidad.getFechaCreacion() != null ? entidad.getFechaCreacion() : LocalDateTime.now())
+                .razonSocial(entidad.getRazonSocial())
+                .telefono(entidad.getTelefono())
+                .direccion(entidad.getDireccion())
+                .fechaCreacion(entidad.getFechaCreacion())
                 .build();
     }
 }
