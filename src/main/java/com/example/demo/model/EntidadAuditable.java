@@ -3,8 +3,11 @@ package com.example.demo.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,16 +23,16 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.0.0
+ * @version 1.1.0
  * @see AuditingEntityListener
  */
-
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-
-
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public abstract class EntidadAuditable {
 
     /**
@@ -40,9 +43,9 @@ public abstract class EntidadAuditable {
     private LocalDateTime fechaCreacion;
 
     /**
-     * Fecha y hora de la ultima modificación de la entidad.
+     * Fecha y hora de la última modificación de la entidad.
      */
     @LastModifiedDate
     @Column(name = "fecha_ultima_modificacion")
-    private LocalDateTime UltimaModificacion;
+    private LocalDateTime ultimaModificacion;
 }

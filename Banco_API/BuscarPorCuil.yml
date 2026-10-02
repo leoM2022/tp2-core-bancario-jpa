@@ -1,7 +1,7 @@
 info:
   name: BuscarPorCuil
   type: http
-  seq: 9
+  seq: 8
 
 http:
   method: GET

@@ -1,7 +1,7 @@
 info:
   name: 1.5-Consultar CUIL
   type: http
-  seq: 9
+  seq: 7
 
 http:
   method: GET
