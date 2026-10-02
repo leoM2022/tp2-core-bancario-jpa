@@ -9,38 +9,42 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
 /**
- * Entidad correspondiente a las cuentas corrientes. Estas mismas heredan de CuentaBancaria.
+ * Especialización de {@link CuentaBancaria} que habilita acuerdos de sobregiro (giro en descubierto).
+ * <p>
+ * Contempla costos fijos de mantenimiento periódico y margen de crédito operativo complementario.
+ * </p>
  *
- * @see CuentaBancaria
- * @version 1.0.0
  * @author Dyevara23 & leoM2022
+ * @version 1.2.0
+ * @see CuentaBancaria
  */
 @Entity
+@DiscriminatorValue("CUENTA_CORRIENTE")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@DiscriminatorValue("CUENTA_CORRIENTE")
+@SuperBuilder
 public class CuentaCorriente extends CuentaBancaria {
 
     /**
-     * Margen o giro en descubierto correspondiente a la cuenta.
+     * Límite de crédito disponible para operar con saldo negativo transitorio.
      */
     @NotNull(message = "El margen de descubierto es obligatorio para la Cuenta Corriente")
-    @PositiveOrZero(message = "El margen debe ser positivo o cero")
+    @PositiveOrZero(message = "El margen de descubierto debe ser mayor o igual a cero")
     @Column(name = "margen_descubierto", precision = 15, scale = 2)
     private BigDecimal margenDescubierto;
 
     /**
-     * Costo mensual del mantenimiento de la cuenta.
+     * Cargo fijo deducible por administración mensual del producto.
      */
     @NotNull(message = "El costo de mantenimiento es obligatorio para la Cuenta Corriente")
-    @PositiveOrZero(message = "El costo de mantenimiento debe ser positivo o cero")
+    @PositiveOrZero(message = "El costo de mantenimiento debe ser mayor o igual a cero")
     @Column(name = "costo_mantenimiento", precision = 10, scale = 2)
     private BigDecimal costoMantenimiento;
-
 }

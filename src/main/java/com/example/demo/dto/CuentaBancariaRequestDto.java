@@ -1,45 +1,65 @@
 package com.example.demo.dto;
 
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
- * Clase RequestDto de la Entidad {@link com.example.demo.model.CuentaBancaria} con las validaciones correspondientes
- * para cada uno de sus atributos.
+ * Data Transfer Object (DTO) para la solicitud de apertura de cuenta bancaria.
+ * <p>
+ * Centraliza las validaciones de formato financiero requeridas por el BCRA
+ * (CBU numérico de 22 posiciones y Alias alfanumérico estandarizado).
+ * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.0.0
+ * @version 1.2.0
  */
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CuentaBancariaRequestDto {
+
     /**
-     * Clave Bancaria Uniforme correspondiente a la cuenta. Solo puede
-     * contener números y tiene longitud de 22 caracteres.
+     * Clave Bancaria Uniforme (CBU) de 22 dígitos numéricos.
      */
-    @Pattern(regexp = "\\d{22}", message = "El CBU solo puede contener números")
+    @NotBlank(message = "El CBU es obligatorio")
+    @Pattern(regexp = "^\\d{22}$", message = "El CBU debe contener exactamente 22 dígitos numéricos")
     private String cbu;
 
     /**
-     * Alias correspondiente a la cuenta bancaria. Debe tener entre 6 y 20 caracteres y
-     * solo puede contener letras, números, guion/es y punto/s.
+     * Alias unívoco asignado para la cuenta en el sistema financiero.
      */
-    @Size(min = 6, max = 20)
+    @NotBlank(message = "El alias es obligatorio")
+    @Size(min = 6, max = 20, message = "El alias debe contener entre 6 y 20 caracteres")
     @Pattern(
             regexp = "^[a-zA-Z0-9.-]{6,20}$",
-            message = "El alias debe tener entre 6 y 20 caracteres y solo puede contener letras, números, puntos y guiones"
+            message = "El alias solo puede contener caracteres alfanuméricos, puntos y guiones"
     )
     private String alias;
 
     /**
-     * Saldo operativo de la cuenta bancaria.
+     * Monto con el cual se realiza la apertura inicial de la cuenta.
      */
-    @Digits(integer = 20, fraction = 2, message = "El saldo operativo puede tener un máximo de 20 enteros y 2 decimales.")
+    @NotNull(message = "El saldo operativo inicial es obligatorio")
+    @PositiveOrZero(message = "El saldo inicial debe ser mayor o igual a cero")
+    @Digits(integer = 18, fraction = 2, message = "El saldo admite hasta 18 enteros y 2 decimales")
     private BigDecimal saldoOperativo;
+
+    /**
+     * Identificador UUID opcional del cliente titular (si no se envía, el servicio asigna el titular por defecto).
+     */
+    private UUID clienteId;
 }
