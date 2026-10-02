@@ -1,54 +1,61 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.CuentaBancaria;
 import com.example.demo.model.TipoTransaccion;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
- * Clase RequestDto de la Entidad Transaccion con las validaciones correspondientes
- * para cada uno de sus atributos.
+ * Data Transfer Object (DTO) para la emisión y procesamiento de transacciones financieras.
+ * <p>
+ * Desacopla la capa de presentación de las entidades relacionales, recibiendo las Claves
+ * Bancarias Uniformes (CBU) involucradas en lugar de entidades Hibernate anidadas.
+ * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.0.0
+ * @version 1.2.0
+ * @see TipoTransaccion
  */
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TransaccionRequestDto {
 
     /**
-     * Tipo de transacción: DEPOSITO, EXTRACCIÓN, TRANSFERENCIA_ENVIADA, TRANSFERENCIA_RECIBIDA
+     * CBU de la cuenta bancaria ordenante o sobre la cual se realiza el débito.
      */
-    private TipoTransaccion tipoTransaccion;
+    @NotBlank(message = "El CBU de origen es obligatorio")
+    @Pattern(regexp = "^\\d{22}$", message = "El CBU de origen debe contener exactamente 22 dígitos numéricos")
+    private String cbuOrigen;
 
     /**
-     * Cuenta Origen de la transacción.
+     * CBU de la cuenta bancaria receptora del crédito (opcional en caso de extracciones o depósitos puros).
      */
-    @NotNull(message = "La cuenta de origen es obligatoria.")
-    private CuentaBancaria cuentaOrigen;
+    @Pattern(regexp = "^\\d{22}$", message = "El CBU de destino debe contener exactamente 22 dígitos numéricos")
+    private String cbuDestino;
 
     /**
-     * Cuenta Destino de la transacción.
+     * Monto total líquido a operar.
      */
-    @NotNull(message = "La cuenta de destino es obligatoria.")
-    private CuentaBancaria cuentaDestino;
-
-    /**
-     * Monto total de la transacción con un máximo de 9 enteros y 2 decimales.
-     */
-    @NotNull(message = "El monto no puede ser nulo.")
-    @Digits(integer = 9, fraction = 2, message = "El monto debe tener máximo 9 enteros y 2 decimales.")
+    @NotNull(message = "El monto es obligatorio")
+    @Positive(message = "El monto debe ser estrictamente superior a cero")
+    @Digits(integer = 15, fraction = 2, message = "El monto admite hasta 15 dígitos enteros y 2 decimales")
     private BigDecimal monto;
 
     /**
-     * Fecha y Hora de la transacción.
+     * Tipo operacional del movimiento a registrar.
      */
-    private LocalDateTime fechaHora;
+    @NotNull(message = "El tipo de transacción es obligatorio")
+    private TipoTransaccion tipoTransaccion;
 }
