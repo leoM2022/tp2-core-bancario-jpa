@@ -1,0 +1,27 @@
+info:
+  name: 01 - Registrar Cliente A
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/clientes"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Leandro Mamani",
+        "email": "leandro.mamani@banco.com",
+        "cuil": "20-43123456-8",
+        "telefono": "+54-388-4234567",
+        "razonSocial": "Mamani Servicios SRL",
+        "direccion": "Av. Fascio 1234"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

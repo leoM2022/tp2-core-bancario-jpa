@@ -1,0 +1,25 @@
+info:
+  name: 08 - Error Saldo Insuficiente
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/transacciones/transferir"
+  body:
+    type: json
+    data: |-
+      {
+        "cbuOrigen": "0000003100010000000001",
+        "cbuDestino": "0000003100010000000002",
+        "monto": 9999999.00,
+        "tipoTransaccion": "TRANSFERENCIA"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
