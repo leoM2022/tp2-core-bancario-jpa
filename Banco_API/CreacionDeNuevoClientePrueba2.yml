@@ -1,7 +1,7 @@
 info:
-  name: 1.2 - Error CUIL duplicado
+  name: CreacionDeNuevoClientePrueba2
   type: http
-  seq: 2
+  seq: 9
 
 http:
   method: POST
@@ -13,7 +13,7 @@ http:
         "nombre": "Leandro",
         "email": "leandroMamani@gmail.com",
         "cuil": "20-44229125-8",
-        "telefono": "+388-3",
+        "telefono": "+388-2",
         "razonSocial": "Empresa Test SA",
         "direccion": "Av Belgrano 123"
       }

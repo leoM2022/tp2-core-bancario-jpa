@@ -1,5 +1,5 @@
 package com.example.demo.model;
-
+//Agregar Documentacion 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

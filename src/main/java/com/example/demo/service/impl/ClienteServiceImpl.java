@@ -18,15 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 /**
- * Implementación de la interfaz {@link ClienteService}.
+ * Implementación transaccional del servicio de aplicación {@link ClienteService}.
+ * <p>
+ * Centraliza la orquestación de operaciones de negocio para la gestión de clientes,
+ * garantizando integridad transaccional ACID, inmutabilidad de componentes y auditoría vía logs.
+ * </p>
  *
- * <p>Este servicio gestiona toda la lógica de negocio relacionada con la entidad {@link Cliente},
- * incluyendo la creación, recuperación, listado y eliminación de registros, así como el desacoplamiento
- * de entrada/salida para la API REST mediante objetos DTO.</p>
- *
- * @version 1.1.0
  * @author Dyevara23 & leoM2022
- * @since 2026-09-21
+ * @version 1.2.0
+ * @see ClienteService
+ * @see ClienteRepository
+ * @see ClienteMapper
  */
 @Slf4j
 @Service
@@ -36,112 +38,113 @@ public class ClienteServiceImpl implements ClienteService {
     private final ClienteRepository clienteRepository;
 
     /**
-     * Registra un cliente en el sistema a partir de un DTO de entrada (TP4).
-     *
-     * @param requestDto DTO validado con los datos de entrada del cliente.
-     * @return DTO de salida con los datos públicos del cliente registrado.
-     * @throws RecursoDuplicadoException si el CUIL o el Email ya existen en la base de datos.
+     * {@inheritDoc}
      */
     @Override
     @Transactional
     public ClienteResponseDto registrarClienteDto(ClienteRequestDto requestDto) {
-        log.info("Iniciando registro de cliente via DTO con CUIL: {}", requestDto.getCuil());
+        log.info("Procesando registro de cliente vía DTO con CUIL: {}", requestDto.getCuil());
 
-        if (clienteRepository.findByCuil(requestDto.getCuil()).isPresent()) {
-            log.error("El CUIL {} ya se encuentra registrado", requestDto.getCuil());
-            throw new RecursoDuplicadoException("El CUIL " + requestDto.getCuil() + " ya se encuentra registrado.");
-        }
+        String cuilSanitizado = requestDto.getCuil().trim();
+        String emailSanitizado = requestDto.getEmail().trim().toLowerCase();
 
-        if (clienteRepository.findByEmail(requestDto.getEmail()).isPresent()) {
-            log.error("El correo {} ya se encuentra registrado", requestDto.getEmail());
-            throw new RecursoDuplicadoException("El correo electronico ya esta en uso.");
-        }
+        validarUnicidad(cuilSanitizado, emailSanitizado);
 
         Cliente nuevoCliente = ClienteMapper.toEntity(requestDto);
-        Cliente clienteGuardado = clienteRepository.save(nuevoCliente);
+        Cliente clienteGuardado = clienteRepository.saveAndFlush(nuevoCliente);
 
-        log.info("Cliente registrado exitosamente desde DTO con ID: {}", clienteGuardado.getId());
+        log.info("Cliente registrado exitosamente vía DTO con UUID: {}", clienteGuardado.getId());
         return ClienteMapper.toResponseDto(clienteGuardado);
     }
 
     /**
-     * Persiste un nuevo cliente en el sistema a partir de la entidad directa (TP3).
-     *
-     * @param cliente El objeto {@link Cliente} que contiene los datos a registrar.
-     * @return La instancia del {@link Cliente} persistido, incluyendo su ID generado.
-     * @throws RecursoDuplicadoException si el CUIL o el correo electrónico ya existen en el sistema.
+     * {@inheritDoc}
      */
     @Override
     @Transactional
     public Cliente crearCliente(Cliente cliente) {
-        log.info("Validando alta de cliente con CUIL: {}", cliente.getCuil());
+        log.info("Validando alta directa de entidad Cliente con CUIL: {}", cliente.getCuil());
 
-        if (clienteRepository.findByCuil(cliente.getCuil()).isPresent()) {
-            log.error("El CUIL {} ya se encuentra registrado", cliente.getCuil());
-            throw new RecursoDuplicadoException("El CUIL " + cliente.getCuil() + " ya se encuentra registrado.");
-        }
+        String cuilSanitizado = cliente.getCuil().trim();
+        String emailSanitizado = cliente.getEmail().trim().toLowerCase();
 
-        if (clienteRepository.findByEmail(cliente.getEmail()).isPresent()) {
-            log.error("El correo {} ya se encuentra registrado", cliente.getEmail());
-            throw new RecursoDuplicadoException("El correo electronico ya esta en uso.");
-        }
+        validarUnicidad(cuilSanitizado, emailSanitizado);
 
-        Cliente guardado = clienteRepository.save(cliente);
-        log.info("Cliente registrado exitosamente con ID: {}", guardado.getId());
+        cliente.setCuil(cuilSanitizado);
+        cliente.setEmail(emailSanitizado);
+
+        Cliente guardado = clienteRepository.saveAndFlush(cliente);
+        log.info("Entidad Cliente persistida exitosamente con UUID: {}", guardado.getId());
         return guardado;
     }
 
     /**
-     * Recupera un cliente específico utilizando su identificador único (UUID).
-     *
-     * @param id El identificador único (UUID) del cliente a recuperar.
-     * @return El {@link Cliente} correspondiente al ID especificado.
-     * @throws RecursoNoEncontradoException si no existe ningún cliente asociado al ID provisto.
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
     public Cliente obtenerClientePorId(UUID id) {
+        log.debug("Ejecutando consulta de cliente por UUID: {}", id);
         return clienteRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con ID: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Búsqueda infructuosa: No existe cliente con UUID: {}", id);
+                    return new RecursoNoEncontradoException("Cliente no encontrado con ID: " + id);
+                });
     }
 
     /**
-     * Recupera un cliente utilizando su Código Único de Identificación Laboral (CUIL).
-     *
-     * @param cuil El CUIL exacto del cliente a buscar, en formato de cadena de texto.
-     * @return El {@link Cliente} asociado al CUIL proporcionado.
-     * @throws RecursoNoEncontradoException si no existe ningún cliente asociado al CUIL provisto.
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
     public Cliente obtenerClientePorCuil(String cuil) {
-        return clienteRepository.findByCuil(cuil)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con CUIL: " + cuil));
+        String cuilSanitizado = cuil.trim();
+        log.debug("Ejecutando consulta de cliente por CUIL: {}", cuilSanitizado);
+        return clienteRepository.findByCuil(cuilSanitizado)
+                .orElseThrow(() -> {
+                    log.warn("Búsqueda infructuosa: No existe cliente con CUIL: {}", cuilSanitizado);
+                    return new RecursoNoEncontradoException("Cliente no encontrado con CUIL: " + cuilSanitizado);
+                });
     }
 
     /**
-     * Obtiene una lista paginada de todos los clientes registrados en el sistema.
-     *
-     * @param pageable Objeto {@link Pageable} que contiene la información de paginación.
-     * @return Una {@link Page} que contiene las entidades de clientes solicitadas.
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
     public Page<Cliente> listarPaginado(Pageable pageable) {
+        log.debug("Consultando listado paginado de clientes. Página: {}, Tamaño: {}", pageable.getPageNumber(), pageable.getPageSize());
         return clienteRepository.findAll(pageable);
     }
 
     /**
-     * Elimina un cliente del sistema basándose en su identificador único.
-     *
-     * @param id El identificador único (UUID) del cliente que se desea eliminar.
-     * @throws RecursoNoEncontradoException si el cliente a eliminar no se encuentra en el sistema.
+     * {@inheritDoc}
      */
     @Override
     @Transactional
     public void eliminarCliente(UUID id) {
+        log.info("Iniciando baja física del cliente con UUID: {}", id);
         Cliente cliente = obtenerClientePorId(id);
         clienteRepository.delete(cliente);
-        log.info("Cliente con ID {} eliminado exitosamente", id);
+        log.info("Cliente con UUID {} eliminado exitosamente del repositorio", id);
+    }
+
+    /**
+     * Comprueba las invariantes de negocio de unicidad fiscal y de correo de contacto.
+     *
+     * @param cuil CUIL fiscal a validar.
+     * @param email Correo electrónico a validar.
+     * @throws RecursoDuplicadoException Si alguno de los datos ya existe en la base relacional.
+     */
+    private void validarUnicidad(String cuil, String email) {
+        if (clienteRepository.existsByCuil(cuil)) {
+            log.error("Regla de negocio infringida: El CUIL {} ya se encuentra registrado", cuil);
+            throw new RecursoDuplicadoException("El CUIL " + cuil + " ya se encuentra registrado en el sistema.");
+        }
+
+        if (clienteRepository.existsByEmail(email)) {
+            log.error("Regla de negocio infringida: El correo {} ya se encuentra registrado", email);
+            throw new RecursoDuplicadoException("El correo electrónico " + email + " ya está en uso.");
+        }
     }
 }

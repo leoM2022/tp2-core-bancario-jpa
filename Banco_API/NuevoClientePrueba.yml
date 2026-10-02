@@ -1,7 +1,7 @@
 info:
-  name: 1.2 - Error CUIL duplicado
+  name: NuevoClientePrueba
   type: http
-  seq: 2
+  seq: 9
 
 http:
   method: POST
@@ -10,12 +10,12 @@ http:
     type: json
     data: |-
       {
-        "nombre": "Leandro",
-        "email": "leandroMamani@gmail.com",
-        "cuil": "20-44229125-8",
-        "telefono": "+388-3",
-        "razonSocial": "Empresa Test SA",
-        "direccion": "Av Belgrano 123"
+        "nombre": "hector",
+        "email": "hd@gmail.com",
+        "cuil": "27-44235422-0",
+        "telefono": "+388-4",
+        "razonSocial": "Empresa Wayne SA",
+        "direccion": "Av Central 742"
       }
   auth: inherit
 
