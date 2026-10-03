@@ -59,23 +59,20 @@ public final class ClienteMapper {
     /**
      * Convierte una entidad de dominio persistida {@link Cliente} en su correspondiente {@link ClienteResponseDto}.
      *
-     * @param entidad Instancia persistida de {@link Cliente} recuperada desde la base de datos.
+     * @param cliente Entidad de dominio que representa al cliente en la base de datos.
      * @return DTO representativo para serialización JSON pública o null si la entidad es nula.
      */
-    public static ClienteResponseDto toResponseDto(Cliente entidad) {
-        if (entidad == null) {
-            return null;
-        }
-
+    public static ClienteResponseDto toResponseDto(Cliente cliente) {
+        if (cliente == null) return null;
         return ClienteResponseDto.builder()
-                .id(entidad.getId())
-                .nombre(entidad.getNombre())
-                .email(entidad.getEmail())
-                .cuil(entidad.getCuil())
-                .razonSocial(entidad.getRazonSocial())
-                .telefono(entidad.getTelefono())
-                .direccion(entidad.getDireccion())
-                .fechaCreacion(entidad.getFechaCreacion())
+                .id(cliente.getId())
+                .cuil(cliente.getCuil())
+                .nombre(cliente.getNombre())
+                .razonSocial(cliente.getRazonSocial())
+                .direccion(cliente.getDireccion())
+                .telefono(cliente.getTelefono())
+                .email(cliente.getEmail())
+                .estado(cliente.getEstado())
                 .build();
     }
 }
