@@ -104,4 +104,18 @@ public class ClienteController {
         clienteService.eliminarCliente(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Endpoint para confirmar y activar la cuenta de un cliente mediante token temporal.
+     *
+     * @param token Token alfanumérico UUID enviado al correo del cliente.
+     * @return {@link ResponseEntity} con código 200 OK y el comprobante del cliente activo.
+     */
+    @GetMapping("/activar")
+    public ResponseEntity<ClienteResponseDto> activarCliente(
+            @RequestParam("token") String token) {
+        log.info("Petición REST recibida: GET /api/v1/clientes/activar");
+        ClienteResponseDto response = clienteService.activarClientePorToken(token);
+        return ResponseEntity.ok(response);
+    }
 }

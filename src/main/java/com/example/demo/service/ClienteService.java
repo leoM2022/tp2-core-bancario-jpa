@@ -76,4 +76,14 @@ public interface ClienteService {
      * @throws RecursoNoEncontradoException Si el cliente no existe en la base de datos.
      */
     void eliminarCliente(UUID id);
+
+    /**
+     * Valida y activa un cliente a partir de su token único de confirmación.
+     *
+     * @param token Código UUID recibido mediante el enlace de activación.
+     * @return {@link ClienteResponseDto} con los datos del cliente y estado actualizado a ACTIVO.
+     * @throws TokenInvalidoException Si el token no existe o superó las 24 horas reglamentarias.
+     */
+    ClienteResponseDto activarClientePorToken(String token);
+
 }
