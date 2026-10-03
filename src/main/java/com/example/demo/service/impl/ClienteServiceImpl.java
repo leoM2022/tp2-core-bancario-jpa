@@ -6,6 +6,7 @@ import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.model.Cliente;
+import com.example.demo.model.EstadoCliente;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.service.ClienteService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -22,13 +24,16 @@ import java.util.UUID;
  * <p>
  * Centraliza la orquestación de operaciones de negocio para la gestión de clientes,
  * garantizando integridad transaccional ACID, inmutabilidad de componentes y auditoría vía logs.
+ * En el marco del TP5, administra el ciclo de vida inicial de los usuarios mediante
+ * estados pendientes y tokens de activación con caducidad temporal de 24 horas.
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see ClienteService
  * @see ClienteRepository
  * @see ClienteMapper
+ * @see EstadoCliente
  */
 @Slf4j
 @Service
@@ -51,9 +56,18 @@ public class ClienteServiceImpl implements ClienteService {
         validarUnicidad(cuilSanitizado, emailSanitizado);
 
         Cliente nuevoCliente = ClienteMapper.toEntity(requestDto);
+        nuevoCliente.setCuil(cuilSanitizado);
+        nuevoCliente.setEmail(emailSanitizado);
+
+        // Reglas de negocio del TP5: Estado inicial y Token con vigencia de 24 horas
+        nuevoCliente.setEstado(EstadoCliente.PENDIENTE_ACTIVACION);
+        nuevoCliente.setTokenActivacion(UUID.randomUUID().toString());
+        nuevoCliente.setFechaExpiracionToken(LocalDateTime.now().plusHours(24));
+
         Cliente clienteGuardado = clienteRepository.saveAndFlush(nuevoCliente);
 
-        log.info("Cliente registrado exitosamente vía DTO con UUID: {}", clienteGuardado.getId());
+        log.info("Cliente registrado exitosamente vía DTO en estado PENDIENTE_ACTIVACION. UUID: {}, Token: {}",
+                clienteGuardado.getId(), clienteGuardado.getTokenActivacion());
         return ClienteMapper.toResponseDto(clienteGuardado);
     }
 
@@ -73,8 +87,13 @@ public class ClienteServiceImpl implements ClienteService {
         cliente.setCuil(cuilSanitizado);
         cliente.setEmail(emailSanitizado);
 
+        // Reglas de negocio del TP5: Estado inicial y Token con vigencia de 24 horas
+        cliente.setEstado(EstadoCliente.PENDIENTE_ACTIVACION);
+        cliente.setTokenActivacion(UUID.randomUUID().toString());
+        cliente.setFechaExpiracionToken(LocalDateTime.now().plusHours(24));
+
         Cliente guardado = clienteRepository.saveAndFlush(cliente);
-        log.info("Entidad Cliente persistida exitosamente con UUID: {}", guardado.getId());
+        log.info("Entidad Cliente persistida exitosamente con UUID: {} y Token: {}", guardado.getId(), guardado.getTokenActivacion());
         return guardado;
     }
 

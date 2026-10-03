@@ -3,6 +3,8 @@ package com.example.demo.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +22,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,18 +33,14 @@ import java.util.UUID;
  * Entidad de dominio que modela al cliente titular o cotitular de cuentas bancarias.
  * <p>
  * Representa el nodo central del módulo de gestión de clientes (CRM bancario).
- * Administra las siguientes relaciones de persistencia:
- * <ul>
- *   <li><b>1:N con {@link CuentaBancaria}:</b> Un cliente puede poseer múltiples cuentas operativas.</li>
- *   <li><b>Relación reflexiva N:1 (clienteTutor):</b> Permite asociar clientes menores o representados a un titular responsable.</li>
- *   <li><b>Relación reflexiva 1:N (cotitulares):</b> Agrupa a los cotitulares dependientes de un tutor legal.</li>
- * </ul>
+ * Administra las relaciones de persistencia y reglas de negocio
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see EntidadAuditable
  * @see CuentaBancaria
+ * @see EstadoCliente
  */
 @Entity
 @Table(name = "clientes")
@@ -48,7 +48,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(callSuper = false)
 public class Cliente extends EntidadAuditable {
 
@@ -108,6 +108,27 @@ public class Cliente extends EntidadAuditable {
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "El correo electrónico debe ser una dirección válida")
     @Column(name = "email", nullable = false, unique = true, length = 60)
     private String email;
+
+    /**
+     * Estado operativo y de habilitación del cliente dentro del sistema bancario.
+     * Los clientes inician en estado {@link EstadoCliente#PENDIENTE_ACTIVACION}.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false, length = 30)
+    private EstadoCliente estado;
+
+    /**
+     * Token criptográfico de activación generado aleatoriamente (formato UUID)
+     * para el enlace de confirmación por correo electrónico.
+     */
+    @Column(name = "token_activacion", unique = true, length = 36)
+    private String tokenActivacion;
+
+    /**
+     * Marca temporal que fija el límite de vigencia de 24 horas del token de activación.
+     */
+    @Column(name = "fecha_expiracion_token")
+    private LocalDateTime fechaExpiracionToken;
 
     /**
      * Cuentas bancarias de las cuales este cliente es titular principal.

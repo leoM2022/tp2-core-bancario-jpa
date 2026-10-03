@@ -53,6 +53,19 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
     Optional<Cliente> findByTelefono(String telefono);
 
     /**
+     * Búsqueda de un cliente mediante su token unívoco de activación de cuenta.
+     * <p>
+     * Utilizado durante el flujo de confirmación para validar la vigencia
+     * y existencia del enlace temporal de 24 horas.
+     * </p>
+     *
+     * @param tokenActivacion Identificador único universal (UUID) asignado en el alta.
+     * @return {@link Optional} que contiene la entidad {@link Cliente} localizada, o vacío si no existe.
+     */
+
+    Optional<Cliente> findByTokenActivacion(String tokenActivacion);
+
+    /**
      * Comprobación rápida de existencia por CUIL para validación previa en la capa de negocio.
      * Genera una consulta relacional optimizada (SELECT 1 ... LIMIT 1) sin instanciar la entidad en memoria.
      *

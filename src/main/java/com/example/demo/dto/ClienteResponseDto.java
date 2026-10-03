@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.EstadoCliente;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,4 +66,8 @@ public class ClienteResponseDto {
      * Marca de tiempo de persistencia generada por EntidadAuditable.
      */
     private LocalDateTime fechaCreacion;
+    /**
+     * Estado del cliente.
+     */
+    private EstadoCliente estado;
 }
