@@ -4,6 +4,7 @@ import com.example.demo.dto.ClienteRequestDto;
 import com.example.demo.dto.ClienteResponseDto;
 import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
+import com.example.demo.exception.TokenInvalidoException;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.EstadoCliente;
@@ -165,5 +166,47 @@ public class ClienteServiceImpl implements ClienteService {
             log.error("Regla de negocio infringida: El correo {} ya se encuentra registrado", email);
             throw new RecursoDuplicadoException("El correo electrónico " + email + " ya está en uso.");
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public ClienteResponseDto activarClientePorToken(String token) {
+        log.info("Iniciando proceso de activación con token: {}", token);
+
+        if (token == null || token.trim().isEmpty()) {
+            throw new TokenInvalidoException("El token de activación no puede ser nulo o vacío.");
+        }
+
+        Cliente cliente = clienteRepository.findByTokenActivacion(token.trim())
+                .orElseThrow(() -> {
+                    log.warn("Activación fallida: No existe cliente asociado al token provisto: {}", token);
+                    return new TokenInvalidoException("El token de activación no existe o es inválido.");
+                });
+
+        // 1. Validar si ya está activo
+        if (cliente.getEstado() == EstadoCliente.ACTIVO) {
+            log.warn("El cliente con CUIL {} ya se encontraba activo previamente", cliente.getCuil());
+            return ClienteMapper.toResponseDto(cliente);
+        }
+
+        // 2. Validar ventana temporal de 24 horas
+        if (cliente.getFechaExpiracionToken() == null ||
+                LocalDateTime.now().isAfter(cliente.getFechaExpiracionToken())) {
+            log.error("El token de activación ha expirado para el cliente ID: {}", cliente.getId());
+            throw new TokenInvalidoException("El token de activación ha expirado. Su validez máxima es de 24 horas.");
+        }
+
+        // 3. Pasar a ACTIVO e invalidar el token consumido
+        cliente.setEstado(EstadoCliente.ACTIVO);
+        cliente.setTokenActivacion(null);
+        cliente.setFechaExpiracionToken(null);
+
+        Cliente clienteActualizado = clienteRepository.saveAndFlush(cliente);
+        log.info("Cliente con UUID {} activado exitosamente.", clienteActualizado.getId());
+
+        return ClienteMapper.toResponseDto(clienteActualizado);
     }
 }

@@ -150,4 +150,16 @@ public class GlobalExceptionHandler {
         body.put("mensaje", mensaje);
         return ResponseEntity.status(status).body(body);
     }
+
+    /**
+     * Captura excepciones de tokens de activación inexistentes o vencidos.
+     *
+     * @param ex Excepción de negocio capturada.
+     * @return Respuesta estructurada con código HTTP 400 Bad Request.
+     */
+    @ExceptionHandler(TokenInvalidoException.class)
+    public ResponseEntity<Map<String, Object>> manejarTokenInvalido(TokenInvalidoException ex) {
+        log.warn("Activación rechazada [400 BAD REQUEST]: {}", ex.getMessage());
+        return construirRespuesta(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 }
