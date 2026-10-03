@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.ClienteRequestDto;
 import com.example.demo.dto.ClienteResponseDto;
+import com.example.demo.event.ClienteRegistradoEvent;
 import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
 import com.example.demo.exception.TokenInvalidoException;
@@ -12,6 +13,7 @@ import com.example.demo.repository.ClienteRepository;
 import com.example.demo.service.ClienteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,7 @@ import java.util.UUID;
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
-
+    private final ApplicationEventPublisher eventPublisher;
     /**
      * {@inheritDoc}
      */
@@ -64,8 +66,14 @@ public class ClienteServiceImpl implements ClienteService {
         nuevoCliente.setEstado(EstadoCliente.PENDIENTE_ACTIVACION);
         nuevoCliente.setTokenActivacion(UUID.randomUUID().toString());
         nuevoCliente.setFechaExpiracionToken(LocalDateTime.now().plusHours(24));
-
+        //Publicacion del evento asinrono desacoplado
         Cliente clienteGuardado = clienteRepository.saveAndFlush(nuevoCliente);
+        eventPublisher.publishEvent(new ClienteRegistradoEvent(
+                clienteGuardado.getId(),
+                clienteGuardado.getNombre(),
+                clienteGuardado.getEmail(),
+                clienteGuardado.getTokenActivacion()
+        ));
 
         log.info("Cliente registrado exitosamente vía DTO en estado PENDIENTE_ACTIVACION. UUID: {}, Token: {}",
                 clienteGuardado.getId(), clienteGuardado.getTokenActivacion());
@@ -94,6 +102,12 @@ public class ClienteServiceImpl implements ClienteService {
         cliente.setFechaExpiracionToken(LocalDateTime.now().plusHours(24));
 
         Cliente guardado = clienteRepository.saveAndFlush(cliente);
+        eventPublisher.publishEvent(new ClienteRegistradoEvent(
+                guardado.getId(),
+                guardado.getNombre(),
+                guardado.getEmail(),
+                guardado.getTokenActivacion()
+        ));
         log.info("Entidad Cliente persistida exitosamente con UUID: {} y Token: {}", guardado.getId(), guardado.getTokenActivacion());
         return guardado;
     }
@@ -209,4 +223,6 @@ public class ClienteServiceImpl implements ClienteService {
 
         return ClienteMapper.toResponseDto(clienteActualizado);
     }
+
+
 }
