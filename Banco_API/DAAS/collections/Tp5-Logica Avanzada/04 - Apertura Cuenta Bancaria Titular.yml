@@ -1,0 +1,25 @@
+info:
+  name: 04 - Apertura Cuenta Bancaria Titular
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/cuentas"
+  body:
+    type: json
+    data: |-
+      {
+        "cbu": "0008003100010000000001",
+        "alias": "CARLOS.PEREZ.BANCO",
+        "saldoOperativo": 150000.00,
+        "clienteId": "73f55f74-7e68-48e8-9c64-efed09a16b95"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

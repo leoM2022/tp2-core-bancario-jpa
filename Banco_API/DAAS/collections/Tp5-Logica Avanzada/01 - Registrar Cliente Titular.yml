@@ -1,0 +1,27 @@
+info:
+  name: 01 - Registrar Cliente Titular
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/clientes"
+  body:
+    type: json
+    data: |-
+      {
+        "cuil": "20-38123456-7",
+        "nombre": "Carlos Alberto Perez",
+        "razonSocial": "Carlos Perez SRL",
+        "direccion": "Av. Fascio 850",
+        "telefono": "+54-388-4123456",
+        "email": "carlosperez.banco@gmail.com"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
