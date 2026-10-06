@@ -1,20 +1,37 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.service.NotificacionEmailService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Implementación del servicio de notificación por correo electrónico.
- * Simula el despacho SMTP mediante la generación y renderizado
- * de plantillas HTML en los logs de auditoría del sistema.
+ * <p>
+ * Gestiona el armado y despacho de correos en formato HTML multipart con soporte UTF-8
+ * hacia servidores SMTP para el flujo de activación del cliente.
+ * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.0.0
+ * @version 1.2.0
+ * @see NotificacionEmailService
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class NotificacionEmailServiceImpl implements NotificacionEmailService {
+
+    private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username:no-reply@banco.com}")
+    private String remitente;
 
     private static final String URL_ACTIVACION_BASE = "http://localhost:8080/api/v1/clientes/activar?token=";
 
@@ -23,12 +40,25 @@ public class NotificacionEmailServiceImpl implements NotificacionEmailService {
         String urlActivacion = URL_ACTIVACION_BASE + tokenActivacion;
         String cuerpoHtml = construirPlantillaHtml(nombreCliente, urlActivacion);
 
-        log.info("==================== [SIMULACIÓN SERVICIO DE CORREO SMTP] ====================");
-        log.info("Para: {}", destinatario);
-        log.info("Asunto: ¡Bienvenido al Banco! Confirma la activación de tu cuenta bancaria");
-        log.info("Formato: text/html; charset=UTF-8");
-        log.info("Cuerpo del mensaje HTML generado:\n{}", cuerpoHtml);
-        log.info("=============================================================================");
+        try {
+            MimeMessage mensaje = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(
+                    mensaje,
+                    MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name()
+            );
+
+            helper.setFrom(remitente);
+            helper.setTo(destinatario);
+            helper.setSubject("¡Bienvenido al Banco! Confirma la activación de tu cuenta bancaria");
+            helper.setText(cuerpoHtml, true); // true habilita el renderizado HTML
+
+            mailSender.send(mensaje);
+            log.info("[SMTP] Correo de activación despachado con éxito a: {}", destinatario);
+
+        } catch (MessagingException e) {
+            log.error("[SMTP-ERROR] Error al despachar el correo de activación hacia {}: {}", destinatario, e.getMessage(), e);
+        }
     }
 
     private String construirPlantillaHtml(String nombre, String link) {
