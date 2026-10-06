@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.dto.AdherenteResponseDto;
 import com.example.demo.dto.ClienteRequestDto;
 import com.example.demo.dto.ClienteResponseDto;
 import com.example.demo.model.Cliente;
@@ -74,5 +75,18 @@ public final class ClienteMapper {
                 .email(cliente.getEmail())
                 .estado(cliente.getEstado())
                 .build();
+    }
+    public static AdherenteResponseDto toAdherenteResponseDto(Cliente adherente){
+        if (adherente == null) return null;
+        return AdherenteResponseDto.builder()
+                .id(adherente.getId())
+                .nombre(adherente.getNombre())
+                .cuil(adherente.getCuil()).
+                telefono(adherente.getTelefono())
+                .rol(adherente.getRolCliente())
+                .direccion(adherente.getDireccion())
+                .fechaCreacion(adherente.getFechaCreacion())
+                .estado(adherente.getEstado()).
+                build();
     }
 }

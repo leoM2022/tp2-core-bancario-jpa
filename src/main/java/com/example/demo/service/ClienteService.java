@@ -1,13 +1,18 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.AdherenteRequestDto;
+import com.example.demo.dto.AdherenteResponseDto;
 import com.example.demo.dto.ClienteRequestDto;
 import com.example.demo.dto.ClienteResponseDto;
+import com.example.demo.exception.OperacionNoPermitidaException;
 import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
+import com.example.demo.exception.TokenInvalidoException;
 import com.example.demo.model.Cliente;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -51,6 +56,28 @@ public interface ClienteService {
      * @throws RecursoNoEncontradoException Si no existe registro asociado al UUID provisto.
      */
     Cliente obtenerClientePorId(UUID id);
+
+    /**
+     * Registra y vincula un nuevo adherente bajo la tutela de un cliente titular existente.
+     *
+     * @param cuilTitular CUIL del titular de la cuenta bancaria.
+     * @param requestDto DTO con los datos de filiación, parentesco y contacto del adherente.
+     * @return {@link AdherenteResponseDto} con el UUID asignado y estado de habilitación.
+     * @throws RecursoNoEncontradoException Si el titular no existe en el sistema.
+     * @throws RecursoDuplicadoException Si el CUIL o DNI del adherente ya se encuentra registrado.
+     * @throws OperacionNoPermitidaException Si el titular provisto es a su vez un adherente.
+     */
+    AdherenteResponseDto registrarAdherente(String cuilTitular, AdherenteRequestDto requestDto);
+
+    /**
+     * Desvincula un adherente de su titular o revoca su autorización de extracción.
+     *
+     * @param cuilTitular   CUIL del titular de la cuenta bancaria
+     * @param cuilAdherente CUIL del adherente a desvincular.
+     * @throws RecursoNoEncontradoException  Si el titular o el adherente no existen.
+     * @throws OperacionNoPermitidaException Si el adherente no pertenece al titular indicado.
+     */
+    void desvincularAdherente(String cuilTitular, String cuilAdherente);
 
     /**
      * Localiza un cliente a partir de su Clave Única de Identificación Laboral (CUIL).

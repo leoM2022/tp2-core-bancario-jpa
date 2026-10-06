@@ -1,8 +1,11 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.AdherenteRequestDto;
+import com.example.demo.dto.AdherenteResponseDto;
 import com.example.demo.dto.ClienteRequestDto;
 import com.example.demo.dto.ClienteResponseDto;
 import com.example.demo.event.ClienteRegistradoEvent;
+import com.example.demo.exception.OperacionNoPermitidaException;
 import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
 import com.example.demo.exception.TokenInvalidoException;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -124,6 +128,59 @@ public class ClienteServiceImpl implements ClienteService {
                     log.warn("Búsqueda infructuosa: No existe cliente con UUID: {}", id);
                     return new RecursoNoEncontradoException("Cliente no encontrado con ID: " + id);
                 });
+    }
+
+    @Override
+    @Transactional
+    public AdherenteResponseDto registrarAdherente(String cuilTitular, AdherenteRequestDto requestDto) {
+        log.info("Procesando registro de adherente vía DTO con CUIL: {}", requestDto.getCuil());
+        //Buscar el titular por su CUIL. En caso de no encontrarlo, lanzar excepción correspondiente.
+        Cliente titular = clienteRepository.findByCuil(cuilTitular)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Titular no encontrado con el CUIL: " + cuilTitular));
+        //Un adherente no debería tener sus propios adherentes.
+        if(titular.getTitular() != null){
+            throw new OperacionNoPermitidaException("Un cliente adherente no puede tener otros adherentes a cargo");
+        }
+        //Verificación de existencia del cuil del adherente.
+        if (clienteRepository.existsByCuil(requestDto.getCuil())) {
+            throw new RecursoDuplicadoException("Ya existe un cliente o adherente registrado con el CUIL: " + requestDto.getCuil());
+        }
+        // Armar un correo único basado en el titular y el CUIL del adherente
+        String emailAdherente = "adh." + requestDto.getCuil().replaceAll("\\D", "") + "@banco.local";
+
+        Cliente adherente = new Cliente();
+        adherente.setCuil(requestDto.getCuil());
+        adherente.setNombre(requestDto.getNombre());
+        adherente.setRolCliente(requestDto.getRolCliente());
+        adherente.setEstado(titular.getEstado());
+        adherente.setTelefono(titular.getTelefono());
+        adherente.setEmail(emailAdherente);
+        adherente.setDireccion(titular.getDireccion());
+        adherente.setRazonSocial(titular.getRazonSocial());
+
+        //El adherente asigna como titular al titular y este lo agrega a su lista de adherentes.
+        adherente.setTitular(titular);
+        titular.getAdherentes().add(adherente);
+        Cliente adherenteGuardado = clienteRepository.save(adherente);
+
+        return ClienteMapper.toAdherenteResponseDto(adherenteGuardado);
+    }
+
+
+    @Override
+    @Transactional
+    public void desvincularAdherente(String cuilTitular, String cuilAdherente) {
+        //Buscar el titular por su CUIL. En caso de no encontrarlo, lanzar excepción correspondiente.
+        Cliente titular = clienteRepository.findByCuil(cuilTitular)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Titular no encontrado con el CUIL: " + cuilTitular));
+        Cliente adherente = clienteRepository.findByCuil(cuilAdherente)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Adherente no encontrado con el CUIL: " + cuilAdherente));
+        if (adherente.getTitular() == null || !adherente.getTitular().getCuil().equals(cuilTitular)){
+            throw new OperacionNoPermitidaException("El adherente no se encuentra asignado al titular con el CUIL: " + cuilTitular);
+        }
+        adherente.setTitular(null);
+        titular.getAdherentes().remove(adherente);
+        clienteRepository.save(adherente);
     }
 
     /**

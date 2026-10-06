@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AdherenteRequestDto;
+import com.example.demo.dto.AdherenteResponseDto;
 import com.example.demo.dto.ClienteRequestDto;
 import com.example.demo.dto.ClienteResponseDto;
 import com.example.demo.mapper.ClienteMapper;
 import com.example.demo.model.Cliente;
 import com.example.demo.service.ClienteService;
+import com.example.demo.service.impl.ClienteServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -117,5 +121,24 @@ public class ClienteController {
         log.info("Petición REST recibida: GET /api/v1/clientes/activar");
         ClienteResponseDto response = clienteService.activarClientePorToken(token);
         return ResponseEntity.ok(response);
+    }
+    // POST /api/clientes/5/adherentes
+    @PostMapping("/{cuilTitular}/adherentes")
+    public ResponseEntity<AdherenteResponseDto> agregarAdherente(
+            @PathVariable String cuilTitular,
+            @Valid @RequestBody AdherenteRequestDto request) {
+
+        AdherenteResponseDto nuevoAdherente = clienteService.registrarAdherente(cuilTitular, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoAdherente);
+    }
+
+    @DeleteMapping("/{cuilTitular}/adherentes/{cuilAdherente}")
+    public ResponseEntity<Void> desvincularAdherente(
+            @PathVariable String cuilTitular,
+            @PathVariable String cuilAdherente) {
+
+        log.info("Petición REST recibida: Desvinculando adherente con CUIL {} de titular con CUIL {}", cuilAdherente, cuilTitular);
+        clienteService.desvincularAdherente(cuilTitular, cuilAdherente);
+        return ResponseEntity.noContent().build();
     }
 }

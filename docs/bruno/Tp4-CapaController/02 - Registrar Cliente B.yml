@@ -10,11 +10,11 @@ http:
     type: json
     data: |-
       {
-        "nombre": "Daniel Guevara",
-        "email": "daniel.guevara@banco.com",
+        "nombre": "Daniel Yevara",
+        "email": "daniel.yevara@banco.com",
         "cuil": "20-41987654-3",
         "telefono": "+54-388-4987654",
-        "razonSocial": "Guevara Soluciones Informaticas",
+        "razonSocial": "Yevara Soluciones Informaticas",
         "direccion": "Calle Gorriti 567, San Salvador de Jujuy"
       }
   auth: inherit
