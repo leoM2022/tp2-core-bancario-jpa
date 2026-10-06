@@ -1,0 +1,28 @@
+info:
+  name: 05 - Registrar Adherente
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}/clientes/20-38123456-7/adherentes"
+  body:
+    type: json
+    data: |-
+      {
+        "cuil": "20-45987654-3",
+        "nombre": "Lucas Perez",
+        "razonSocial": "Lucas Perez",
+        "direccion": "Av. Fascio 850",
+        "telefono": "+54-388-4987654",
+        "email": "lucasperez.adherente@gmail.com",
+        "rolCliente": "HIJO"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
