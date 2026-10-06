@@ -2,19 +2,12 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.TransaccionRequestDto;
 import com.example.demo.dto.TransaccionResponseDto;
-import com.example.demo.exception.CuentaInactivaException;
-import com.example.demo.exception.OperacionInvalidaException;
-import com.example.demo.exception.RecursoNoEncontradoException;
-import com.example.demo.exception.SaldoInsuficienteException;
+import com.example.demo.exception.*;
 import com.example.demo.mapper.TransaccionMapper;
-import com.example.demo.model.CuentaBancaria;
-import com.example.demo.model.CuentaCorriente;
-import com.example.demo.model.EstadoCuenta;
-import com.example.demo.model.EstadoTransaccion;
-import com.example.demo.model.TipoTransaccion;
-import com.example.demo.model.Transaccion;
+import com.example.demo.model.*;
 import com.example.demo.repository.CuentaBancariaRepository;
 import com.example.demo.repository.TransaccionRepository;
+import com.example.demo.service.ClienteService;
 import com.example.demo.service.TransaccionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +26,7 @@ import java.util.List;
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see TransaccionService
  * @see CuentaBancariaRepository
  * @see TransaccionRepository
@@ -46,6 +39,7 @@ public class TransaccionServiceImpl implements TransaccionService {
 
     private final CuentaBancariaRepository cuentaRepository;
     private final TransaccionRepository transaccionRepository;
+    private final ClienteService clienteService;
 
     /**
      * {@inheritDoc}
@@ -59,12 +53,12 @@ public class TransaccionServiceImpl implements TransaccionService {
             log.error("Solicitud inválida: Se requieren los CBUs de origen y destino");
             throw new OperacionInvalidaException("Debe especificar el CBU de origen y de destino.");
         }
-
+        String cuilCliente = requestDto.getCuilCliente().trim();
         String cbuOrigen = requestDto.getCbuOrigen().trim();
         String cbuDestino = requestDto.getCbuDestino().trim();
         BigDecimal monto = requestDto.getMonto();
 
-        Transaccion transaccion = transferir(cbuOrigen, cbuDestino, monto, "Transferencia inmediata vía API REST");
+        Transaccion transaccion = transferir(cuilCliente, cbuOrigen, cbuDestino, monto, "Transferencia inmediata vía API REST");
         return TransaccionMapper.toResponseDto(transaccion);
     }
 
@@ -73,7 +67,12 @@ public class TransaccionServiceImpl implements TransaccionService {
      */
     @Override
     @Transactional
-    public Transaccion transferir(String cbuOrigen, String cbuDestino, BigDecimal monto, String concepto) {
+    public Transaccion transferir(String cuilCliente, String cbuOrigen, String cbuDestino, BigDecimal monto, String concepto) {
+        Cliente cliente = clienteService.obtenerClientePorCuil(cuilCliente);
+        if(cliente.getRolCliente() != RolCliente.TITULAR){
+            log.error("Operación inválida: El cliente no tiene permisos para realizar la operación.");
+            throw new OperacionNoPermitidaException("Solo el TITULAR de la cuenta puede realizar esta operación.");
+        }
         log.info("Iniciando transferencia de ${} desde CBU {} hacia CBU {}", monto, cbuOrigen, cbuDestino);
 
         if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {

@@ -22,7 +22,7 @@ import java.math.BigDecimal;
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see TipoTransaccion
  */
 @Getter
@@ -31,6 +31,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class TransaccionRequestDto {
+
+    /**
+     * Código Único de Identificación Laboral o Tributaria con formato oficial (XX-XXXXXXXX-X).
+     */
+    @NotBlank(message = "El CUIL es obligatorio")
+    @Pattern(regexp = "^(20|23|24|27|30|33)-\\d{8}-\\d$", message = "El CUIL debe respetar el formato oficial XX-XXXXXXXX-X")
+    private String cuilCliente;
 
     /**
      * CBU de la cuenta bancaria ordenante o sobre la cual se realiza el débito.

@@ -8,6 +8,7 @@ import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
 import com.example.demo.exception.SaldoInsuficienteException;
 import com.example.demo.model.CuentaBancaria;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -20,7 +21,7 @@ import java.util.UUID;
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see CuentaBancaria
  * @see CuentaBancariaRequestDto
  * @see CuentaBancariaResponseDto
@@ -50,18 +51,20 @@ public interface CuentaBancariaService {
      * Acredita fondos en una cuenta bancaria activa.
      *
      * @param idCuenta Identificador UUID de la cuenta destino.
+     * @param cuilCliente CUIL del cliente que realiza la transacción.
      * @param monto Importe monetario a acreditar.
      * @return Instancia de {@link CuentaBancaria} actualizada con el nuevo saldo.
      * @throws OperacionInvalidaException Si el monto es nulo o menor/igual a cero.
      * @throws CuentaInactivaException Si la cuenta receptora no se encuentra en estado ACTIVA.
      * @throws RecursoNoEncontradoException Si la cuenta no existe en el repositorio.
      */
-    CuentaBancaria depositar(UUID idCuenta, BigDecimal monto);
+    CuentaBancaria depositar(UUID idCuenta, String cuilCliente, BigDecimal monto);
 
     /**
      * Debita fondos de una cuenta bancaria activa considerando descubierto en Cuentas Corrientes.
      *
      * @param idCuenta Identificador UUID de la cuenta de origen.
+     * @param cuilCliente CUIL del cliente que realiza la transacción.
      * @param monto Importe monetario a debitar.
      * @return Instancia de {@link CuentaBancaria} actualizada con el saldo remanente.
      * @throws OperacionInvalidaException Si el monto es nulo o menor/igual a cero.
@@ -69,7 +72,7 @@ public interface CuentaBancariaService {
      * @throws SaldoInsuficienteException Si los fondos disponibles (incluyendo descubierto) son insuficientes.
      * @throws RecursoNoEncontradoException Si la cuenta no existe en la base de datos.
      */
-    CuentaBancaria extraer(UUID idCuenta, BigDecimal monto);
+    CuentaBancaria extraer(UUID idCuenta, String cuilCliente, BigDecimal monto);
 
     /**
      * Recupera una cuenta bancaria por su Clave Bancaria Uniforme (CBU).

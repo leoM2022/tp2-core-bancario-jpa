@@ -2,19 +2,12 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.CuentaBancariaRequestDto;
 import com.example.demo.dto.CuentaBancariaResponseDto;
-import com.example.demo.exception.CuentaInactivaException;
-import com.example.demo.exception.OperacionInvalidaException;
-import com.example.demo.exception.RecursoDuplicadoException;
-import com.example.demo.exception.RecursoNoEncontradoException;
-import com.example.demo.exception.SaldoInsuficienteException;
+import com.example.demo.exception.*;
 import com.example.demo.mapper.CuentaBancariaMapper;
-import com.example.demo.model.CajaAhorro;
-import com.example.demo.model.Cliente;
-import com.example.demo.model.CuentaBancaria;
-import com.example.demo.model.CuentaCorriente;
-import com.example.demo.model.EstadoCuenta;
+import com.example.demo.model.*;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.repository.CuentaBancariaRepository;
+import com.example.demo.service.ClienteService;
 import com.example.demo.service.CuentaBancariaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -32,7 +26,7 @@ import java.util.UUID;
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see CuentaBancariaService
  * @see CuentaBancariaRepository
  * @see ClienteRepository
@@ -45,6 +39,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
     private final CuentaBancariaRepository cuentaRepository;
     private final ClienteRepository clienteRepository;
+    private final ClienteService clienteService;
 
     /**
      * {@inheritDoc}
@@ -103,15 +98,19 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
      */
     @Override
     @Transactional
-    public CuentaBancaria depositar(UUID idCuenta, BigDecimal monto) {
+    public CuentaBancaria depositar(UUID idCuenta,String cuilCliente, BigDecimal monto) {
+        Cliente cliente = clienteService.obtenerClientePorCuil(cuilCliente);
+        CuentaBancaria cuenta = obtenerPorId(idCuenta);
+        if (cliente.getRolCliente() != RolCliente.TITULAR){
+            log.error("Operación rechazada: El cliente no tiene permisos para realizar la operación.");
+            throw new OperacionNoPermitidaException("Solo el TITULAR puede realizar esta operación.");
+        }
         log.info("Iniciando depósito en cuenta ID: {} por monto: {}", idCuenta, monto);
 
         if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
             log.error("Operación rechazada: Monto inválido para depósito ({})", monto);
             throw new OperacionInvalidaException("El monto a depositar debe ser superior a cero.");
         }
-
-        CuentaBancaria cuenta = obtenerPorId(idCuenta);
 
         if (cuenta.getEstado() != EstadoCuenta.ACTIVA) {
             log.error("Operación rechazada: La cuenta {} se encuentra en estado {}", idCuenta, cuenta.getEstado());
@@ -128,11 +127,10 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     /**
      * {@inheritDoc}
      */
-    @Override
     @Transactional
-    public CuentaBancaria extraer(UUID idCuenta, BigDecimal monto) {
+    @Override
+    public CuentaBancaria extraer(UUID idCuenta, String cuilCliente, BigDecimal monto) {
         log.info("Iniciando extracción en cuenta ID: {} por monto: {}", idCuenta, monto);
-
         if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
             log.error("Operación rechazada: Monto inválido para extracción ({})", monto);
             throw new OperacionInvalidaException("El monto a extraer debe ser superior a cero.");

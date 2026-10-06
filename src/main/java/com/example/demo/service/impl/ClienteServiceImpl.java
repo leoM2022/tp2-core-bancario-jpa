@@ -213,11 +213,11 @@ public class ClienteServiceImpl implements ClienteService {
      */
     @Override
     @Transactional
-    public void eliminarCliente(UUID id) {
-        log.info("Iniciando baja física del cliente con UUID: {}", id);
-        Cliente cliente = obtenerClientePorId(id);
+    public void eliminarCliente(String cuilCliente) {
+        log.info("Iniciando baja física del cliente con CUIL: {}", cuilCliente);
+        Cliente cliente = obtenerClientePorCuil(cuilCliente);
         clienteRepository.delete(cliente);
-        log.info("Cliente con UUID {} eliminado exitosamente del repositorio", id);
+        log.info("Cliente con CUIL {} eliminado exitosamente del repositorio", cuilCliente);
     }
 
     /**

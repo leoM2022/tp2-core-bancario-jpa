@@ -1,0 +1,22 @@
+info:
+  name: 11 - Eliminar Cliente B
+  type: http
+  seq: 11
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/clientes/27-43256147-2"
+  body:
+    type: json
+    data: |-
+      {
+        "cuilCliente": "27-43256147-2"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
