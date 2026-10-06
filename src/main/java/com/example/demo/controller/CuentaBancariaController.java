@@ -23,7 +23,7 @@ import java.util.UUID;
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see CuentaBancariaService
  * @see CuentaBancariaRequestDto
  * @see CuentaBancariaResponseDto
@@ -83,9 +83,9 @@ public class CuentaBancariaController {
      * @return {@link ResponseEntity} 200 OK con el estado y saldo actualizado de la cuenta.
      */
     @PostMapping("/{id}/depositar")
-    public ResponseEntity<CuentaBancariaResponseDto> depositar(@PathVariable UUID id, @RequestParam BigDecimal monto) {
+    public ResponseEntity<CuentaBancariaResponseDto> depositar(@PathVariable UUID id,@RequestParam String cuilCliente, @RequestParam BigDecimal monto) {
         log.info("Petición REST recibida: Depósito en cuenta UUID {} por monto: {}", id, monto);
-        CuentaBancaria cuentaActualizada = cuentaBancariaService.depositar(id, monto);
+        CuentaBancaria cuentaActualizada = cuentaBancariaService.depositar(id,cuilCliente, monto);
         return ResponseEntity.ok(CuentaBancariaMapper.toResponseDto(cuentaActualizada));
     }
 
@@ -97,9 +97,9 @@ public class CuentaBancariaController {
      * @return {@link ResponseEntity} 200 OK con el balance actualizado de la cuenta.
      */
     @PostMapping("/{id}/extraer")
-    public ResponseEntity<CuentaBancariaResponseDto> extraer(@PathVariable UUID id, @RequestParam BigDecimal monto) {
+    public ResponseEntity<CuentaBancariaResponseDto> extraer(@PathVariable UUID id,@RequestParam String cuilCliente, @RequestParam BigDecimal monto) {
         log.info("Petición REST recibida: Extracción en cuenta UUID {} por monto: {}", id, monto);
-        CuentaBancaria cuentaActualizada = cuentaBancariaService.extraer(id, monto);
+        CuentaBancaria cuentaActualizada = cuentaBancariaService.extraer(id,cuilCliente, monto);
         return ResponseEntity.ok(CuentaBancariaMapper.toResponseDto(cuentaActualizada));
     }
 }

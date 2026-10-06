@@ -19,7 +19,7 @@ import java.util.List;
  * </p>
  *
  * @author Dyevara23 & leoM2022
- * @version 1.2.0
+ * @version 1.3.0
  * @see Transaccion
  * @see TransaccionRequestDto
  * @see TransaccionResponseDto
@@ -41,6 +41,7 @@ public interface TransaccionService {
     /**
      * Realiza la transferencia de fondos entre dos cuentas identificadas por CBU.
      *
+     * @param cuilCliente CUIL del cliente que realiza la transacción.
      * @param cbuOrigen CBU de la cuenta que transfiere los fondos.
      * @param cbuDestino CBU de la cuenta que recibe la acreditación.
      * @param monto Importe líquido a transferir.
@@ -51,7 +52,7 @@ public interface TransaccionService {
      * @throws CuentaInactivaException Si alguna de las cuentas está inactiva o bloqueada.
      * @throws SaldoInsuficienteException Si los fondos disponibles son inferiores al monto solicitado.
      */
-    Transaccion transferir(String cbuOrigen, String cbuDestino, BigDecimal monto, String concepto);
+    Transaccion transferir(String cuilCliente, String cbuOrigen, String cbuDestino, BigDecimal monto, String concepto);
 
     /**
      * Obtiene el listado completo de transacciones registradas para auditoría.

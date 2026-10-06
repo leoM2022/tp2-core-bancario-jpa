@@ -102,7 +102,7 @@ public interface ClienteService {
      * @param id Identificador del cliente a remover.
      * @throws RecursoNoEncontradoException Si el cliente no existe en la base de datos.
      */
-    void eliminarCliente(UUID id);
+    void eliminarCliente(String cuilCliente);
 
     /**
      * Valida y activa un cliente a partir de su token único de confirmación.

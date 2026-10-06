@@ -10,6 +10,7 @@ http:
     type: json
     data: |-
       {
+        "cuilCliente":"27-43256147-2",
         "cbuOrigen": "0000003100010000000001",
         "cbuDestino": "0000003100010000000002",
         "monto": 30000.00,

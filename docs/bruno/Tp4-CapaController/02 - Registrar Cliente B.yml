@@ -15,6 +15,7 @@ http:
         "cuil": "20-41987654-3",
         "telefono": "+54-388-4987654",
         "razonSocial": "Yevara Soluciones Informaticas",
+        "rolCliente": "TITULAR",
         "direccion": "Calle Gorriti 567, San Salvador de Jujuy"
       }
   auth: inherit

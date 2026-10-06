@@ -102,10 +102,10 @@ public class ClienteController {
      * @param id UUID del cliente a dar de baja.
      * @return {@link ResponseEntity} 204 No Content tras la baja exitosa.
      */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarCliente(@PathVariable UUID id) {
-        log.info("Petición REST recibida: Baja de cliente con UUID {}", id);
-        clienteService.eliminarCliente(id);
+    @DeleteMapping("/{cuilCliente}")
+    public ResponseEntity<Void> eliminarCliente(@PathVariable String cuilCliente) {
+        log.info("Petición REST recibida: Baja de cliente con CUIL {}", cuilCliente);
+        clienteService.eliminarCliente(cuilCliente);
         return ResponseEntity.noContent().build();
     }
 
