@@ -96,19 +96,20 @@ public class Cliente extends EntidadAuditable {
     /**
      * Línea telefónica de contacto en formato interurbano/móvil estándar (+54...).
      */
-    @NotBlank(message = "El teléfono de contacto es obligatorio")
     @Pattern(regexp = "^\\+?[0-9]{1,3}[- ]?[0-9]{1,4}[- ]?[0-9]{4,8}$", message = "Formato telefónico inválido. Ejemplo aceptado: +54-388-1234567")
-    @Column(name = "telefono", nullable = false, length = 20)
+    @Column(name = "telefono", length = 20)
     private String telefono;
 
     /**
      * Dirección de correo electrónico validada bajo estructura estándar de internet.
      */
-    @NotBlank(message = "El correo electrónico es obligatorio")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "El correo electrónico debe ser una dirección válida")
-    @Column(name = "email", nullable = false, unique = true, length = 60)
+    @Column(name = "email", unique = true, length = 60)
     private String email;
 
+    /**
+     * Rol del cliente dentro de una cuenta bancaria: [TITULAR, CÓNYUGE, HIJO]
+     */
+    private RolCliente rolCliente;
     /**
      * Estado operativo y de habilitación del cliente dentro del sistema bancario.
      * Los clientes inician en estado {@link EstadoCliente#PENDIENTE_ACTIVACION}.
@@ -137,6 +138,18 @@ public class Cliente extends EntidadAuditable {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<CuentaBancaria> cuentas = new ArrayList<>();
+
+    /**
+     * Referencia al titular de la cuenta bancaria.
+     */
+    @ManyToOne(fetch = FetchType.LAZY) Cliente titular;
+
+    /**
+     * Listado de Adherentes de una cuenta bancaria.
+     */
+    @OneToMany(mappedBy = "titular", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Cliente> adherentes = new ArrayList<>();
 
     /**
      * Referencia al tutor legal o titular representante en cuentas compartidas.
