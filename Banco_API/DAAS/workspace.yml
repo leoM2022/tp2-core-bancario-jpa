@@ -1,0 +1,12 @@
+opencollection: 1.0.0
+info:
+  name: "DAAS"
+  type: workspace
+
+collections:
+  - name: "Tp4-CapaController"
+    path: "collections/Tp4-CapaController - 1"
+
+specs:
+
+docs: ''

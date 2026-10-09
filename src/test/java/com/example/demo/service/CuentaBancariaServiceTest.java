@@ -78,7 +78,7 @@ class CuentaBancariaServiceTest {
         when(cuentaRepository.findById(idCuenta)).thenReturn(Optional.of(cuentaPrueba));
         when(cuentaRepository.save(any(CuentaBancaria.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        CuentaBancaria resultado = cuentaService.depositar(idCuenta, new BigDecimal("3000.00"));
+        CuentaBancaria resultado = cuentaService.depositar(idCuenta, "Depósito de prueba", new BigDecimal("3000.00"));
 
         assertNotNull(resultado);
         assertEquals(new BigDecimal("13000.00"), resultado.getSaldoOperativo());
@@ -98,8 +98,7 @@ class CuentaBancariaServiceTest {
         when(cuentaRepository.findById(idCuenta)).thenReturn(Optional.of(cuentaPrueba));
         when(cuentaRepository.save(any(CuentaBancaria.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Saldo 10000 + Descubierto 5000 = 15000 disponibles. Extraemos 12000:
-        CuentaBancaria resultado = cuentaService.extraer(idCuenta, new BigDecimal("12000.00"));
+        CuentaBancaria resultado = cuentaService.extraer(idCuenta, "Extracción de prueba", new BigDecimal("12000.00"));
 
         assertNotNull(resultado);
         assertEquals(new BigDecimal("-2000.00"), resultado.getSaldoOperativo());
@@ -118,8 +117,7 @@ class CuentaBancariaServiceTest {
     void extraer_Falla_FondosInsuficientes() {
         when(cuentaRepository.findById(idCuenta)).thenReturn(Optional.of(cuentaPrueba));
 
-        // Intento de extraer 20000 cuando el maximo con descubierto es 15000:
-        assertThrows(SaldoInsuficienteException.class, () -> cuentaService.extraer(idCuenta, new BigDecimal("20000.00")));
+        assertThrows(SaldoInsuficienteException.class, () -> cuentaService.extraer(idCuenta, "Extracción rechazada", new BigDecimal("20000.00")));
         verify(cuentaRepository, never()).save(any(CuentaBancaria.class));
     }
 }
