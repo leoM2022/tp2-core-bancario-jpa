@@ -1,5 +1,6 @@
 package com.example.demo.event;
 
+import com.example.demo.model.RolCliente;
 import lombok.Getter;
 
 import java.util.UUID;
@@ -17,12 +18,14 @@ public class ClienteRegistradoEvent {
     private final UUID clienteId;
     private final String nombre;
     private final String email;
+    private final RolCliente rolCliente;
     private final String tokenActivacion;
 
-    public ClienteRegistradoEvent(UUID clienteId, String nombre, String email, String tokenActivacion) {
+    public ClienteRegistradoEvent(UUID clienteId, String nombre, String email,RolCliente rolCliente, String tokenActivacion) {
         this.clienteId = clienteId;
         this.nombre = nombre;
         this.email = email;
+        this.rolCliente = rolCliente;
         this.tokenActivacion = tokenActivacion;
     }
 }

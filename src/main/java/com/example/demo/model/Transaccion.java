@@ -11,7 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,6 +57,16 @@ public class Transaccion extends EntidadAuditable {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID idTransaccion;
+
+    /**
+     * Clave Única de Identificación Tributaria/Laboral (CUIL/CUIT).
+     * Formato requerido por AFIP/ANSES: XX-XXXXXXXX-X.
+     */
+    @NotBlank(message = "El CUIL es obligatorio")
+    @Pattern(regexp = "^(20|23|24|27)-\\d{8}-\\d$", message = "El CUIL debe respetar el formato oficial XX-XXXXXXXX-X")
+    @Column(name = "cuil", nullable = false, length = 13)
+    private String cuilCliente;
+
 
     /**
      * Marca temporal exacta de cuando se procesó la operación contable.

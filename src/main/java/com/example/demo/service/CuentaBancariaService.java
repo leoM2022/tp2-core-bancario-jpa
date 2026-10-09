@@ -7,7 +7,9 @@ import com.example.demo.exception.OperacionInvalidaException;
 import com.example.demo.exception.RecursoDuplicadoException;
 import com.example.demo.exception.RecursoNoEncontradoException;
 import com.example.demo.exception.SaldoInsuficienteException;
+import com.example.demo.model.ConfiguracionTope;
 import com.example.demo.model.CuentaBancaria;
+import com.example.demo.model.RolCliente;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -91,4 +93,12 @@ public interface CuentaBancariaService {
      * @throws RecursoNoEncontradoException Si no existe registro asociado al UUID provisto.
      */
     CuentaBancaria obtenerPorId(UUID idCuenta);
+
+    /**
+     * Recupera una ConfiguracionTope a traves de su rolCliente
+     * @param rolCliente rol del cliente [TITULAR, ADHERENTE].
+     * @return Entidad {@link ConfiguracionTope} correspondiente.
+     * @throws RecursoNoEncontradoException Si no existe el registro.
+     */
+    ConfiguracionTope obtenerTopePorRol(RolCliente rolCliente);
 }

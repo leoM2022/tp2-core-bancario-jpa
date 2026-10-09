@@ -10,9 +10,9 @@ http:
     type: json
     data: |-
       {
-        "cbu": "0000003100010000000002",
-        "alias": "DANIEL.BANCO.DESTINO",
-        "saldoOperativo": 25000.00
+        "cbu": "0000003100010000000007",
+        "alias": "DANIEL.MP",
+        "saldoOperativo": 150000.00
       }
   auth: inherit
 

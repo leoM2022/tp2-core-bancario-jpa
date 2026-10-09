@@ -4,8 +4,15 @@ info:
   seq: 10
 
 http:
-  method: POST
-  url: "{{baseUrl}}/clientes/"
+  method: DELETE
+  url: "{{baseUrl}}/clientes/:cuilTitular/adherentes/:cuilAdhernte"
+  params:
+    - name: cuilAdhernte
+      value: 27-43256147-2
+      type: path
+    - name: cuilTitular
+      value: 20-41987654-3
+      type: path
   auth: inherit
 
 settings:

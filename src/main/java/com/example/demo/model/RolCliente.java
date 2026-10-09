@@ -15,12 +15,7 @@ public enum RolCliente {
     TITULAR,
 
     /**
-     * Persona unida en matrimonio con el/la titular de la cuenta bancaria.
+     * Persona adherente al titular de la cuenta.
      */
-    CONYUGE,
-
-    /**
-     * Hijo/a del titular de la cuenta
-     */
-    HIJO
+    ADHERENTE
 }

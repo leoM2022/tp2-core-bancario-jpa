@@ -1,0 +1,26 @@
+info:
+  name: 14 - Depositar Titular A
+  type: http
+  seq: 14
+
+http:
+  method: POST
+  url: "{{baseUrl}}/cuentas/:idCuenta/depositar?cuilCliente=20-43123456-8&monto=100000"
+  params:
+    - name: cuilCliente
+      value: 20-43123456-8
+      type: query
+    - name: monto
+      value: "100000"
+      type: query
+    - name: idCuenta
+      value: b42915df-73fc-40e0-99a7-dd99aa1ff902
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
