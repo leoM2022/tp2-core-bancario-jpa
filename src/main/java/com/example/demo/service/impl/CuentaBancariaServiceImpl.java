@@ -6,7 +6,9 @@ import com.example.demo.exception.*;
 import com.example.demo.mapper.CuentaBancariaMapper;
 import com.example.demo.model.*;
 import com.example.demo.repository.ClienteRepository;
+import com.example.demo.repository.ConfiguracionTopeRepository;
 import com.example.demo.repository.CuentaBancariaRepository;
+import com.example.demo.repository.TransaccionRepository;
 import com.example.demo.service.ClienteService;
 import com.example.demo.service.CuentaBancariaService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,6 +45,8 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     private final CuentaBancariaRepository cuentaRepository;
     private final ClienteRepository clienteRepository;
     private final ClienteService clienteService;
+    private final TransaccionRepository transaccionRepository;
+    private final ConfiguracionTopeRepository configuracionTopeRepository;
 
     /**
      * {@inheritDoc}
@@ -121,6 +128,18 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         CuentaBancaria actualizada = cuentaRepository.saveAndFlush(cuenta);
         log.info("Depósito completado exitosamente. Nuevo saldo: {}", actualizada.getSaldoOperativo());
 
+        Transaccion transaccion = new Transaccion();
+        transaccion.setCuentaBancaria(cuenta);
+        transaccion.setCuilCliente(cuilCliente);
+        transaccion.setEstadoTransaccion(EstadoTransaccion.COMPLETADA);
+        transaccion.setFechaHora(LocalDateTime.now());
+        transaccion.setIdTransaccion(UUID.randomUUID());
+        transaccion.setMonto(monto);
+        transaccion.setFechaCreacion(LocalDateTime.now());
+        transaccion.setTipoTransaccion(TipoTransaccion.DEPOSITO);
+
+        transaccionRepository.save(transaccion);
+
         return actualizada;
     }
 
@@ -130,10 +149,23 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     @Transactional
     @Override
     public CuentaBancaria extraer(UUID idCuenta, String cuilCliente, BigDecimal monto) {
+        Cliente cliente = clienteService.obtenerClientePorCuil(cuilCliente);
+        ConfiguracionTope topeGlobal = obtenerTopePorRol(cliente.getRolCliente());
         log.info("Iniciando extracción en cuenta ID: {} por monto: {}", idCuenta, monto);
         if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
             log.error("Operación rechazada: Monto inválido para extracción ({})", monto);
             throw new OperacionInvalidaException("El monto a extraer debe ser superior a cero.");
+        }
+        LocalDate hoy = LocalDate.now();
+        LocalDateTime inicioDia = hoy.atStartOfDay();
+        LocalDateTime finDia = hoy.atTime(LocalTime.MAX);
+
+        BigDecimal totalExtraidoHoy = transaccionRepository.sumarExtraccionesDelDia(cuilCliente,inicioDia,finDia);
+        BigDecimal nuevoTotal = totalExtraidoHoy.add(monto);
+
+        if(nuevoTotal.compareTo(topeGlobal.getMontoMaximoDiario())>0){
+            log.error("Operación Rechazada: Tope global superado. Acumulado: {}, Solicitado: {}, Tope: {}",totalExtraidoHoy, monto, topeGlobal.getMontoMaximoDiario());
+            throw new OperacionNoPermitidaException("La extracción excede el limite diario permitido.");
         }
 
         CuentaBancaria cuenta = obtenerPorId(idCuenta);
@@ -159,6 +191,18 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         cuenta.setSaldoOperativo(cuenta.getSaldoOperativo().subtract(monto));
         CuentaBancaria actualizada = cuentaRepository.saveAndFlush(cuenta);
         log.info("Extracción completada exitosamente. Saldo remanente: {}", actualizada.getSaldoOperativo());
+
+        Transaccion transaccion = new Transaccion();
+        transaccion.setFechaCreacion(LocalDateTime.now());
+        transaccion.setMonto(monto);
+        transaccion.setIdTransaccion(UUID.randomUUID());
+        transaccion.setFechaHora(LocalDateTime.now());
+        transaccion.setEstadoTransaccion(EstadoTransaccion.COMPLETADA);
+        transaccion.setCuilCliente(cuilCliente);
+        transaccion.setCuentaBancaria(cuenta);
+        transaccion.setTipoTransaccion(TipoTransaccion.EXTRACCION);
+
+        transaccionRepository.save(transaccion);
 
         return actualizada;
     }
@@ -189,6 +233,17 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
                 .orElseThrow(() -> {
                     log.warn("Búsqueda infructuosa: No existe cuenta con ID: {}", idCuenta);
                     return new RecursoNoEncontradoException("Cuenta no encontrada con ID: " + idCuenta);
+                });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ConfiguracionTope obtenerTopePorRol(RolCliente rolCliente){
+        log.debug("Ejecutando búsqueda de tope global por rol: {}",rolCliente);
+        return configuracionTopeRepository.findByRolCliente(rolCliente)
+                .orElseThrow(() -> {
+                    log.warn("Búsqueda infructuosa: No existe el tope con el rol {}.", rolCliente);
+                    return new RecursoNoEncontradoException("Tope Global no encontrado.");
                 });
     }
 }

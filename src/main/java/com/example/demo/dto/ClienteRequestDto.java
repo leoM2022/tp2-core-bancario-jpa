@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.RolCliente;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -48,6 +49,11 @@ public class ClienteRequestDto {
     @NotBlank(message = "El CUIL es obligatorio")
     @Pattern(regexp = "^(20|23|24|27|30|33)-\\d{8}-\\d$", message = "El CUIL debe respetar el formato oficial XX-XXXXXXXX-X")
     private String cuil;
+
+    /**
+     * Rol del cliente dentro de una cuenta bancaria: [TITULAR, ADHERENTE]
+     */
+    private RolCliente rolCliente;
 
     /**
      * Línea telefónica con código de área estándar.

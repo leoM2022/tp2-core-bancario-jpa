@@ -52,6 +52,7 @@ public final class ClienteMapper {
                 .telefono(dto.getTelefono().trim())
                 .razonSocial(dto.getRazonSocial().trim())
                 .direccion(dto.getDireccion().trim())
+                .rolCliente(dto.getRolCliente())
                 .cuentas(new ArrayList<>())
                 .cotitulares(new ArrayList<>())
                 .build();
@@ -73,6 +74,7 @@ public final class ClienteMapper {
                 .direccion(cliente.getDireccion())
                 .telefono(cliente.getTelefono())
                 .email(cliente.getEmail())
+                .rolCliente(cliente.getRolCliente())
                 .estado(cliente.getEstado())
                 .build();
     }

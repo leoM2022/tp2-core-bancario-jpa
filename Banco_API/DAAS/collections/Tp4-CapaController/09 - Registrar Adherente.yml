@@ -5,14 +5,18 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/clientes/20-41987654-3/adherentes"
+  url: "{{baseUrl}}/clientes/:cuilTitular/adherentes"
+  params:
+    - name: cuilTitular
+      value: 20-41987654-3
+      type: path
   body:
     type: json
     data: |-
       {
         "nombre": "Juliana Soledad Mendoza",
         "cuil": "27-43256147-2",
-        "rolCliente": "CONYUGE"
+        "rolCliente": "ADHERENTE"
       }
   auth: inherit
 

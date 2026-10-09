@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -82,4 +83,12 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, UUID> 
             "LEFT JOIN FETCH t.cuentaDestino " +
             "WHERE t.cuentaBancaria.cbu = :cbu")
     Page<Transaccion> findByCuentaBancariaCbuPaginado(@Param("cbu") String cbu, Pageable pageable);
+
+    @Query("SELECT COALESCE(SUM(t.monto), 0) FROM Transaccion t " +
+            "WHERE t.cuilCliente = :cuilCliente " +
+            "AND t.tipoTransaccion = TipoTransaccion.EXTRACCION AND t.estadoTransaccion = EstadoTransaccion.COMPLETADA " +
+            "AND t.fechaHora BETWEEN :inicioDia AND :finDia")
+    BigDecimal sumarExtraccionesDelDia(@Param("cuilCliente") String cuilCliente,
+                                       @Param("inicioDia") LocalDateTime inicioDia,
+                                       @Param("finDia") LocalDateTime finDia);
 }

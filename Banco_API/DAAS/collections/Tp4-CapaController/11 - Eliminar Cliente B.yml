@@ -5,13 +5,11 @@ info:
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/clientes/27-43256147-2"
-  body:
-    type: json
-    data: |-
-      {
-        "cuilCliente": "27-43256147-2"
-      }
+  url: "{{baseUrl}}/clientes/:cuilCliente"
+  params:
+    - name: cuilCliente
+      value: 20-41987654-3
+      type: path
   auth: inherit
 
 settings:

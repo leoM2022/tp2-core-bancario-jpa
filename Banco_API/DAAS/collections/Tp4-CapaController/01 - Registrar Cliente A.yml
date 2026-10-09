@@ -15,6 +15,7 @@ http:
         "cuil": "20-43123456-8",
         "telefono": "+54-388-4234567",
         "razonSocial": "Mamani Servicios SRL",
+        "rolCliente": "TITULAR",
         "direccion": "Av. Fascio 1234"
       }
   auth: inherit

@@ -76,6 +76,7 @@ public class ClienteServiceImpl implements ClienteService {
                 clienteGuardado.getId(),
                 clienteGuardado.getNombre(),
                 clienteGuardado.getEmail(),
+                clienteGuardado.getRolCliente(),
                 clienteGuardado.getTokenActivacion()
         ));
 
@@ -110,6 +111,7 @@ public class ClienteServiceImpl implements ClienteService {
                 guardado.getId(),
                 guardado.getNombre(),
                 guardado.getEmail(),
+                guardado.getRolCliente(),
                 guardado.getTokenActivacion()
         ));
         log.info("Entidad Cliente persistida exitosamente con UUID: {} y Token: {}", guardado.getId(), guardado.getTokenActivacion());

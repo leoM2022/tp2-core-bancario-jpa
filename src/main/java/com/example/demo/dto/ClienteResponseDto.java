@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import com.example.demo.model.EstadoCliente;
+import com.example.demo.model.RolCliente;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -61,6 +62,11 @@ public class ClienteResponseDto {
      * Domicilio físico registrado.
      */
     private String direccion;
+
+    /**
+     * Rol del cliente dentro de la cuenta bancaria.
+     */
+    private RolCliente rolCliente;
 
     /**
      * Marca de tiempo de persistencia generada por EntidadAuditable.

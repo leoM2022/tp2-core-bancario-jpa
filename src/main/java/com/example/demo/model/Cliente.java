@@ -107,7 +107,7 @@ public class Cliente extends EntidadAuditable {
     private String email;
 
     /**
-     * Rol del cliente dentro de una cuenta bancaria: [TITULAR, CÓNYUGE, HIJO]
+     * Rol del cliente dentro de una cuenta bancaria: [TITULAR, ADHERENTE]
      */
     private RolCliente rolCliente;
     /**

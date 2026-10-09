@@ -1,0 +1,26 @@
+info:
+  name: 12 - Extraccion Titular A
+  type: http
+  seq: 12
+
+http:
+  method: POST
+  url: "{{baseUrl}}/cuentas/:idCuenta/extraer?cuilCliente=20-43123456-8&monto=1"
+  params:
+    - name: cuilCliente
+      value: 20-43123456-8
+      type: query
+    - name: monto
+      value: "1"
+      type: query
+    - name: idCuenta
+      value: b42915df-73fc-40e0-99a7-dd99aa1ff902
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
