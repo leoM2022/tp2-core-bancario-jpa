@@ -35,9 +35,9 @@ public class CuentaBancariaRequestDto {
     /**
      * Clave Bancaria Uniforme (CBU) de 22 dígitos numéricos.
      */
-    @NotBlank(message = "El CBU es obligatorio")
-    @Pattern(regexp = "^\\d{22}$", message = "El CBU debe contener exactamente 22 dígitos numéricos")
-    private String cbu;
+    //@NotBlank(message = "El CBU es obligatorio")
+    //@Pattern(regexp = "^\\d{22}$", message = "El CBU debe contener exactamente 22 dígitos numéricos")
+    //private String cbu;
 
     /**
      * Alias unívoco asignado para la cuenta en el sistema financiero.
@@ -59,7 +59,7 @@ public class CuentaBancariaRequestDto {
     private BigDecimal saldoOperativo;
 
     /**
-     * Identificador UUID opcional del cliente titular (si no se envía, el servicio asigna el titular por defecto).
+     * Clave Única de Identificación Laboral del cliente titular de la cuenta.
      */
-    private UUID clienteId;
+    private String cuilCliente;
 }

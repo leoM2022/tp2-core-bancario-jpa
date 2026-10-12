@@ -101,4 +101,11 @@ public interface CuentaBancariaService {
      * @throws RecursoNoEncontradoException Si no existe el registro.
      */
     ConfiguracionTope obtenerTopePorRol(RolCliente rolCliente);
+
+    /**
+     * Recupera la fecha exacta con milisegundos al momento de aperturar la cuenta. Es usado para formar el cbu de la
+     * misma.
+     * @return Objeto String con el formato uuuuMMddHHmmssSS.
+     */
+    String obtenerFechaCompleta();
 }

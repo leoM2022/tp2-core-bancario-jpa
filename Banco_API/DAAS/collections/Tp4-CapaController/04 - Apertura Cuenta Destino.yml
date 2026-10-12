@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "cbu": "0000003100010000000007",
+        "cuilCliente": "20-41987654-3",
         "alias": "DANIEL.MP",
         "saldoOperativo": 150000.00
       }
