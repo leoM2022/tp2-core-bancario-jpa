@@ -1,0 +1,23 @@
+info:
+  name: 08 - Extraccion Excede Tope Diario - Falla esperada
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/cuentas/1ead4d0f-eaaa-4ef0-b2f1-5453c4a2d579/extraer?cuilCliente=20-38123456-7&monto=90000.00"
+  params:
+    - name: cuilCliente
+      value: 20-38123456-7
+      type: query
+    - name: monto
+      value: "90000.00"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

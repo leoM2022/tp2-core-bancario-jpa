@@ -5,7 +5,14 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/cuentas"
+  url: "{{baseUrl}}/cuentas/1ead4d0f-eaaa-4ef0-b2f1-5453c4a2d579/extraer?cuilCliente=20-38123456-7&monto=20000.00"
+  params:
+    - name: cuilCliente
+      value: 20-38123456-7
+      type: query
+    - name: monto
+      value: "20000.00"
+      type: query
   body:
     type: json
     data: |-

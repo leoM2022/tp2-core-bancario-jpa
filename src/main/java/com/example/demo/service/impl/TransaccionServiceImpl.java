@@ -118,6 +118,7 @@ public class TransaccionServiceImpl implements TransaccionService {
         cuentaRepository.saveAndFlush(destino);
 
         Transaccion txCompletada = Transaccion.builder()
+                .cuilCliente(cuilCliente)
                 .fechaHora(LocalDateTime.now())
                 .monto(monto)
                 .tipoTransaccion(TipoTransaccion.TRANSFERENCIA_ENVIADA)

@@ -1,0 +1,26 @@
+info:
+  name: 06 - Transferencia Monetaria
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{baseUrl}}/transacciones/transferir"
+  body:
+    type: json
+    data: |-
+      {
+        "cuilCliente": "20-38123456-7",
+        "cbuOrigen": "0008003100010000000001",
+        "cbuDestino": "0000003100010000000002",
+        "monto": 5000.00,
+        "tipoTransaccion": "TRANSFERENCIA"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
