@@ -49,7 +49,6 @@ public final class CuentaBancariaMapper {
         }
 
         return CajaAhorro.builder()
-                .cbu(dto.getCbu().trim())
                 .alias(dto.getAlias().trim())
                 .saldoOperativo(dto.getSaldoOperativo())
                 .estado(EstadoCuenta.ACTIVA)

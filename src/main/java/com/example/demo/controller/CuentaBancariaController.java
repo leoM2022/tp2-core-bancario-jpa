@@ -44,7 +44,7 @@ public class CuentaBancariaController {
      */
     @PostMapping
     public ResponseEntity<CuentaBancariaResponseDto> aperturarCuenta(@Valid @RequestBody CuentaBancariaRequestDto requestDto) {
-        log.info("Petición REST recibida: Apertura de cuenta con CBU {}", requestDto.getCbu());
+        log.info("Petición REST recibida: Apertura de cuenta de cliente con CUIL: {}", requestDto.getCuilCliente());
         CuentaBancariaResponseDto response = cuentaBancariaService.aperturarCuentaDto(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

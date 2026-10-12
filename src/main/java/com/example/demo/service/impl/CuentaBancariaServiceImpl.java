@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 /**
@@ -54,16 +54,16 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     @Override
     @Transactional
     public CuentaBancariaResponseDto aperturarCuentaDto(CuentaBancariaRequestDto requestDto) {
-        log.info("Iniciando solicitud de apertura de cuenta con CBU: {} y Alias: {}",
-                requestDto.getCbu(), requestDto.getAlias());
+        log.info("Iniciando solicitud de apertura de cuenta con Alias: {}",
+                requestDto.getAlias());
 
-        String cbuSanitizado = requestDto.getCbu().trim();
+        //Se simula el número del banco con un número del 1 al 99
+        int numBanco = (int) (Math.random()*99)+1;
+
+        //El cbu generado automáticamente con un número de banco (1-99), fecha exacta de la creación de la cuenta y los
+        //últimos 4 dígitos del cuil del titular.
+        String cbu = String.format("%02d",numBanco) + obtenerFechaCompleta() + requestDto.getCuilCliente().trim().replaceAll("\\D","").substring(7);
         String aliasSanitizado = requestDto.getAlias().trim();
-
-        if (cuentaRepository.existsByCbu(cbuSanitizado)) {
-            log.error("Violación de integridad: El CBU {} ya se encuentra registrado.", cbuSanitizado);
-            throw new RecursoDuplicadoException("El CBU " + cbuSanitizado + " ya se encuentra registrado en el sistema.");
-        }
 
         if (cuentaRepository.existsByAlias(aliasSanitizado)) {
             log.error("Violación de integridad: El Alias {} ya se encuentra registrado.", aliasSanitizado);
@@ -71,9 +71,9 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         }
 
         Cliente clienteTitular;
-        if (requestDto.getClienteId() != null) {
-            clienteTitular = clienteRepository.findById(requestDto.getClienteId())
-                    .orElseThrow(() -> new RecursoNoEncontradoException("No existe el cliente con ID: " + requestDto.getClienteId()));
+        if (requestDto.getCuilCliente() != null) {
+            clienteTitular = clienteRepository.findByCuil(requestDto.getCuilCliente())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("No existe el cliente con CUIL: " + requestDto.getCuilCliente()));
         } else {
             clienteTitular = clienteRepository.findAll().stream()
                     .findFirst()
@@ -82,6 +82,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
         CajaAhorro nuevaCuenta = CuentaBancariaMapper.toEntity(requestDto);
         nuevaCuenta.setCliente(clienteTitular);
+        nuevaCuenta.setCbu(cbu);
 
         CuentaBancaria guardada = cuentaRepository.saveAndFlush(nuevaCuenta);
         log.info("Cuenta bancaria aperturada exitosamente con UUID: {}", guardada.getIdCuentaBancaria());
@@ -245,5 +246,11 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
                     log.warn("Búsqueda infructuosa: No existe el tope con el rol {}.", rolCliente);
                     return new RecursoNoEncontradoException("Tope Global no encontrado.");
                 });
+    }
+
+    public String obtenerFechaCompleta(){
+        LocalDateTime hoy = LocalDateTime.now();
+        DateTimeFormatter fechaCompleta = DateTimeFormatter.ofPattern("uuuuMMddHHmmssSS");
+        return hoy.format(fechaCompleta);
     }
 }
