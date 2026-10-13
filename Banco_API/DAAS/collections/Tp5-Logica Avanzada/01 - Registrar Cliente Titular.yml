@@ -10,12 +10,13 @@ http:
     type: json
     data: |-
       {
-        "cuil": "20-38123456-7",
-        "nombre": "Carlos Alberto Perez",
-        "razonSocial": "Carlos Perez SRL",
-        "direccion": "Av. Fascio 850",
-        "telefono": "+54-388-4123456",
-        "email": "carlosperez.banco@gmail.com"
+        "cuil": "20-43111222-3",
+        "nombre": "Valeria Rios",
+        "razonSocial": "Rios Desarrollos SAS",
+        "direccion": "San Martin 520",
+        "telefono": "+54-388-4223344",
+        "email": "valeria.rios@prueba.com",
+        "rolCliente": "TITULAR"
       }
   auth: inherit
 

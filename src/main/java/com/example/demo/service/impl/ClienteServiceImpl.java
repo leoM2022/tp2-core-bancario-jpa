@@ -65,11 +65,12 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente nuevoCliente = ClienteMapper.toEntity(requestDto);
         nuevoCliente.setCuil(cuilSanitizado);
         nuevoCliente.setEmail(emailSanitizado);
-
+        nuevoCliente.setFechaCreacion(LocalDateTime.now());
         // Reglas de negocio del TP5: Estado inicial y Token con vigencia de 24 horas
         nuevoCliente.setEstado(EstadoCliente.PENDIENTE_ACTIVACION);
         nuevoCliente.setTokenActivacion(UUID.randomUUID().toString());
         nuevoCliente.setFechaExpiracionToken(LocalDateTime.now().plusHours(24));
+
         //Publicacion del evento asinrono desacoplado
         Cliente clienteGuardado = clienteRepository.saveAndFlush(nuevoCliente);
         eventPublisher.publishEvent(new ClienteRegistradoEvent(

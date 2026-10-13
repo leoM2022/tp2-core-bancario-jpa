@@ -75,6 +75,7 @@ public final class ClienteMapper {
                 .telefono(cliente.getTelefono())
                 .email(cliente.getEmail())
                 .rolCliente(cliente.getRolCliente())
+                .fechaCreacion(cliente.getFechaCreacion())
                 .estado(cliente.getEstado())
                 .build();
     }

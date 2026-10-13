@@ -2,6 +2,18 @@ spring:
   application:
     name: demo
 
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: c4645be6f7b433
+    password: 2d049a2dcb6572
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/banco_tp2?createDatabaseIfNotExist=true&serverTimezone=UTC}
     username: ${DB_USERNAME:banco_user}
